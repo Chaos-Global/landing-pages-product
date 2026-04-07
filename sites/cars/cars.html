@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Electric Avenue</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: rgba(255,255,255,0.08);
+      --panel-border: rgba(255,255,255,0.14);
+      --text: #eef2ff;
+      --muted: #b8c0e0;
+      --accent: #7cf7c9;
+      --accent-2: #7db8ff;
+      --warning: #ffd36a;
+      --shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(125,184,255,0.18), transparent 30%),
+        radial-gradient(circle at top right, rgba(124,247,201,0.18), transparent 28%),
+        linear-gradient(180deg, #0b1020, #111833 55%, #0c1329 100%);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .grid {
+      width: min(1200px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(14px);
+      background: rgba(8, 12, 24, 0.55);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      z-index: 10;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .brand-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid;
+      place-items: center;
+      color: #071018;
+      font-size: 1.2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .nav a {
+      color: var(--muted);
+      text-decoration: none;
+      margin-left: 18px;
+      font-size: 0.95rem;
+    }
+
+    .nav a:hover { color: var(--text); }
+
+    .hero {
+      padding: 72px 0 48px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--panel-border);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      color: var(--accent);
+      font-size: 0.88rem;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(2.6rem, 5vw, 5rem);
+      line-height: 0.96;
+      margin: 0 0 16px;
+      max-width: 10ch;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.7;
+      max-width: 60ch;
+    }
+
+    .cta-row {
+      margin-top: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #9fffdc);
+      color: #081119;
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--panel-border);
+    }
+
+    .hero-card, .card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      min-height: 420px;
+    }
+
+    .car {
+      position: absolute;
+      inset: auto 20px 24px 20px;
+      height: 170px;
+      background: linear-gradient(135deg, #7db8ff, #7cf7c9);
+      border-radius: 34px 70px 28px 28px;
+      filter: drop-shadow(0 30px 35px rgba(0,0,0,0.35));
+    }
+
+    .car::before {
+      content: "";
+      position: absolute;
+      width: 52%;
+      height: 72px;
+      background: rgba(12, 19, 41, 0.9);
+      top: 18px;
+      left: 19%;
+      border-radius: 24px 34px 10px 10px;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.08);
+    }
+
+    .car::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -14px;
+      height: 24px;
+      background: radial-gradient(circle, rgba(124,247,201,0.45), transparent 60%);
+      filter: blur(8px);
+    }
+
+    .wheel {
+      position: absolute;
+      bottom: -16px;
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%, #a9b3d0 0 18%, #1a223e 19% 46%, #0a0f1f 47% 100%);
+      border: 4px solid #131b31;
+    }
+
+    .wheel.left { left: 50px; }
+    .wheel.right { right: 50px; }
+
+    .battery-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+      color: var(--muted);
+    }
+
+    .battery-track {
+      flex: 1;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .battery-fill {
+      width: 82%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--warning), var(--accent));
+    }
+
+    section { padding: 24px 0; }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 56ch;
+    }
+
+    .stats, .models, .tips {
+      display: grid;
+      gap: 18px;
+    }
+
+    .stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .models {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .tips {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card {
+      padding: 22px;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: 0.8rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(124,247,201,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(124,247,201,0.18);
+      margin-bottom: 14px;
+    }
+
+    .model-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .model-top h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .specs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .spec {
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .spec strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+
+    .quote {
+      position: relative;
+      padding-left: 18px;
+    }
+
+    .quote::before {
+      content: "⚡";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--accent);
+    }
+
+    footer {
+      padding: 40px 0 64px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .stats,
+      .models,
+      .tips {
+        grid-template-columns: 1fr;
+      }
+
+      h1 { max-width: none; }
+      .hero-card { min-height: 360px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="grid nav">
+      <div class="brand">
+        <div class="brand-badge">⚡</div>
+        Electric Avenue
+      </div>
+      <nav>
+        <a href="#models">Models</a>
+        <a href="#charging">Charging</a>
+        <a href="#future">Future</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">⚙️ Random EV Showcase</div>
+        <h1>Drive the future, quietly.</h1>
+        <p>
+          Welcome to a playful one-page tribute to electric cars: fast launches, smooth rides,
+          glowing dashboards, and charging stops that feel more like coffee breaks than fuel runs.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#models">Explore EVs</a>
+          <a class="btn btn-secondary" href="#charging">See charging tips</a>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <div class="pill">Demo vehicle: Neon Falcon X</div>
+        <h3 style="margin:0 0 6px; font-size: 1.5rem;">Battery status</h3>
+        <p class="muted" style="margin-top:0;">A fictional road trip machine with instant torque and a panoramic glass roof.</p>
+        <div class="battery-bar">
+          <span>82%</span>
+          <div class="battery-track"><div class="battery-fill"></div></div>
+          <span>412 km</span>
+        </div>
+
+        <div class="car">
+          <div class="wheel left"></div>
+          <div class="wheel right"></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>Why EVs feel different</h2>
+        <p>Electric cars blend software, batteries, and instant motor response into a driving experience that feels futuristic even on a grocery run.</p>
+      </div>
+      <div class="stats">
+        <div class="card">
+          <div class="stat-value">0 sec</div>
+          <div class="label">Gear shifting needed for smooth acceleration</div>
+        </div>
+        <div class="card">
+          <div class="stat-value">1 pedal</div>
+          <div class="label">Driving style made possible by regenerative braking</div>
+        </div>
+        <div class="card">
+          <div class="stat-value">100%</div>
+          <div class="label">Random enthusiasm for futuristic dashboards</div>
+        </div>
+        <div class="card">
+          <div class="stat-value">24/7</div>
+          <div class="label">Potential for home charging convenience</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="models">
+      <div class="section-title">
+        <h2>Fictional EV lineup</h2>
+        <p>Here are three made-up electric cars for this random page, each with its own personality.</p>
+      </div>
+      <div class="models">
+        <article class="card">
+          <div class="model-top">
+            <div>
+              <div class="pill">Urban Compact</div>
+              <h3>Spark Mini E</h3>
+            </div>
+            <span>🔋</span>
+          </div>
+          <p class="muted">Built for city streets, tight parking, and daily commutes with cheerful efficiency.</p>
+          <div class="specs">
+            <div class="spec"><strong>320 km</strong><span class="label">Range</span></div>
+            <div class="spec"><strong>6.9 s</strong><span class="label">0–100</span></div>
+            <div class="spec"><strong>45 min</strong><span class="label">Fast charge</span></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="model-top">
+            <div>
+              <div class="pill">Family SUV</div>
+              <h3>Volt Ridge</h3>
+            </div>
+            <span>🚙</span>
+          </div>
+          <p class="muted">A roomy crossover with all-wheel confidence, road-trip comfort, and enough storage for half a camping store.</p>
+          <div class="specs">
+            <div class="spec"><strong>510 km</strong><span class="label">Range</span></div>
+            <div class="spec"><strong>5.1 s</strong><span class="label">0–100</span></div>
+            <div class="spec"><strong>28 min</strong><span class="label">Fast charge</span></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="model-top">
+            <div>
+              <div class="pill">Performance Sedan</div>
+              <h3>Photon GT</h3>
+            </div>
+            <span>🏁</span>
+          </div>
+          <p class="muted">Low, sleek, and suspiciously fast. The kind of EV that makes highway merges feel like teleportation.</p>
+          <div class="specs">
+            <div class="spec"><strong>590 km</strong><span class="label">Range</span></div>
+            <div class="spec"><strong>3.4 s</strong><span class="label">0–100</span></div>
+            <div class="spec"><strong>22 min</strong><span class="label">Fast charge</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="charging">
+      <div class="section-title">
+        <h2>Charging thoughts</h2>
+        <p>EV ownership usually becomes easier once charging fits your routine rather than interrupting it.</p>
+      </div>
+      <div class="tips">
+        <div class="card quote">
+          <p class="muted">Home charging often feels like the biggest lifestyle upgrade: you wake up with a “full tank” without visiting a station.</p>
+        </div>
+        <div class="card quote">
+          <p class="muted">Fast charging is ideal for travel days, but slower routine charging can be perfect for overnight top-ups and weekday predictability.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="future">
+      <div class="section-title">
+        <h2>The EV vibe</h2>
+        <p>Electric cars are not just transport. They increasingly feel like rolling gadgets with climate control, software updates, and instant response.</p>
+      </div>
+      <div class="card">
+        <p class="muted" style="margin:0; font-size:1.05rem;">
+          This page is intentionally random and fun, but the design direction is real: bold gradients,
+          clean cards, futuristic mood, and a sense of motion. It would work nicely as a landing page,
+          demo concept, or starting point for a richer EV product site.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Made with electrons, gradients, and mild optimism.
+  </footer>
+</body>
+</html>
+
