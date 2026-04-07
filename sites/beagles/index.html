@@ -553,4 +553,65 @@
           <div class="badge">Morning</div>
           <p class="muted">A beagle checking the yard like a tiny detective on official business.</p>
         </div>
-        <div class="pa
+        <div class="panel card">
+          <div class="badge">Afternoon</div>
+          <p class="muted">A floppy-eared sprint across the grass after spotting something extremely important.</p>
+        </div>
+        <div class="panel card">
+          <div class="badge">Evening</div>
+          <p class="muted">A cozy nap after a long day of investigating scents and charming everyone nearby.</p>
+        </div>
+      </div>
+    </section>
+      <!-- Image Gallery Added -->
+    <section>
+      <div class="section-head">
+        <h2>Beagle Gallery</h2>
+        <p>A few adorable beagle moments.</p>
+      </div>
+      <div class="grid-3">
+        <img src="https://images.unsplash.com/photo-1518717758536-85ae29035b6d?q=80&w=800" style="width:100%; border-radius:16px;">
+        <img src="https://images.unsplash.com/photo-1558788353-f76d92427f16?q=80&w=800" style="width:100%; border-radius:16px;">
+        <img src="https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?q=80&w=800" style="width:100%; border-radius:16px;">
+      </div>
+    </section>
+
+    <!-- CSV Table Section -->
+    <section>
+      <div class="section-head">
+        <h2>Beagle Data (CSV Demo)</h2>
+        <p>This table is generated from CSV data using JavaScript.</p>
+      </div>
+      <div id="csv-table"></div>
+    </section>
+  </main>
+
+  <script>
+    const csvData = `Name,Age,Favorite Activity
+Buddy,3,Sniffing
+Lucy,5,Running
+Max,2,Playing`;
+
+    const rows = csvData.split('\n').map(r => r.split(','));
+    let html = '<table style="width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden;">';
+    rows.forEach((row, i) => {
+      html += '<tr>' + row.map(cell => i===0
+        ? `<th style="padding:12px; background:#e6b17e; color:#2f221a; text-align:left;">${cell}</th>`
+        : `<td style="padding:12px; border-top:1px solid #ddd;">${cell}</td>`
+      ).join('') + '</tr>';
+    });
+    html += '</table>';
+    document.getElementById('csv-table').innerHTML = html;
+  </script>
+
+  <footer>
+    Made with paw prints, warm colors, and strong beagle energy.
+  </footer>
+</body>
+</html>
+
+  <footer>
+    Made with paw prints, warm colors, and strong beagle energy.
+  </footer>
+</body>
+</html>
