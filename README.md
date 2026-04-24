@@ -1,1 +1,1 @@
-# landing-pages-product
+# product-prototypes-static
