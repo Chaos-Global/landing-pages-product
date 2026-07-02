@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Materials · Enscape + Cosmos booth demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Roboto:wght@400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#fff;--n1:#F6F6F6;--n2:#EDEDED;--n3:#DBDBDB;--n4:#ABABAB;--n5:#828282;--n6:#525252;--n7:#3B3B3B;--n8:#272727;--black:#1C1C1C;
+  --blue:#0DB5FF;--blue2:#17A2DF;--blue-press:#0A87BD;--tint:#EBF8FF;--green:#77B22A;--red:#E1161C;--orange:#F3712B;
+  --en-orange:#F7941D;--en-blue:#0B9EDD;--en-blue2:#17A2DF;--en-tint:#E1F0F6;
+  --font:"Poppins","Segoe UI",system-ui,sans-serif;--mono:"Roboto","Segoe UI",sans-serif;--font-en:"Inter","Segoe UI",system-ui,sans-serif;
+  --r:4px;--pill:999px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:#16181b;color:var(--black);height:100vh;overflow:hidden;}
+/* ---- Cosmos plugin panel ---- */
+.cz{width:480px;max-width:100%;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.45);font-size:11px;color:var(--black);}
+.cz-title{height:24px;background:var(--n2);display:flex;align-items:center;gap:8px;padding:0 8px;font-family:var(--mono);font-size:10px;}
+.cz-title .logo{width:14px;height:14px;border-radius:3px;overflow:hidden;flex:none;}
+.cz-title .logo svg{display:block;width:100%;height:100%;}
+.cz-title .sp{flex:1;}.cz-title .wc{width:9px;height:9px;border:1px solid #000;border-radius:2px;opacity:.55;}
+.cz-hdr{display:flex;align-items:center;gap:10px;padding:10px;}
+.cz-brand{width:24px;height:24px;border-radius:4px;overflow:hidden;flex:none;}
+.cz-brand svg{display:block;width:100%;height:100%;}
+.cz-search{flex:1;height:24px;background:var(--n2);border-radius:4px;display:flex;align-items:center;padding:0 8px;color:var(--n4);}
+.cz-av{width:24px;height:24px;border-radius:50%;background:var(--n2);display:grid;place-items:center;font-size:9.75px;}
+.cz-crumb{padding:0 12px 8px;color:var(--n5);font-size:9.75px;}
+.cz-body{padding:0 14px 16px;display:flex;flex-direction:column;gap:13px;}
+
+.cz-mat{display:flex;flex-direction:column;gap:6px;}
+.cz-mat-row{display:flex;align-items:center;gap:8px;justify-content:center;}
+.cz-mat-row h1{font-size:14.5px;font-weight:700;}
+.badge{background:var(--n2);color:var(--n5);font-size:9.75px;border-radius:4px;padding:1px 6px;}
+.cz-opt{display:flex;align-items:center;gap:8px;color:var(--n6);}
+.cz-opt select{flex:1;font-family:var(--font);font-size:11px;background:var(--n2);border:none;border-radius:4px;height:26px;padding:0 8px;cursor:pointer;}
+
+/* preview */
+.pv{background:var(--n1);border:1px solid var(--n2);border-radius:4px;padding:10px;display:flex;flex-direction:column;gap:8px;}
+.pv-tabs{display:flex;gap:4px;}
+.pv-tab{font-family:var(--font);font-size:10px;font-weight:700;background:var(--n2);border:1px solid var(--n2);border-radius:4px;color:var(--n5);padding:3px 9px;cursor:pointer;}
+.pv-tab.on{background:var(--tint);border-color:var(--blue);color:var(--blue2);}
+.pv-cv{position:relative;border-radius:5px;overflow:hidden;background:#272727;line-height:0;}
+.pv-cv canvas{width:100%;height:auto;display:block;}
+.pv-badge{position:absolute;top:7px;left:7px;font-size:9px;font-weight:700;color:#fff;background:rgba(13,181,255,.35);border:1px solid rgba(13,181,255,.55);padding:2px 7px;border-radius:3px;backdrop-filter:blur(4px);}
+.pv-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--n2);padding-top:7px;color:var(--n5);}
+.pv-foot .mono{font-family:var(--mono);font-size:9.5px;}
+.pv-mini{display:flex;gap:6px;}
+.pv-mini button{font-family:var(--font);font-size:10px;font-weight:700;border:none;border-radius:4px;background:var(--n2);color:var(--n6);padding:4px 9px;cursor:pointer;}
+
+/* accordion (Advanced > tiers > subs) */
+.adv{border:1px solid var(--n2);border-radius:4px;overflow:hidden;}
+.adv-h{display:flex;align-items:center;gap:8px;padding:10px;background:var(--n1);cursor:pointer;font-weight:700;}
+.adv-h .chev{margin-left:auto;transition:transform .15s;color:var(--n5);}
+.adv.open .adv-h .chev{transform:rotate(90deg);}
+.adv-b{display:none;padding:6px;flex-direction:column;gap:6px;}
+.adv.open .adv-b{display:flex;}
+
+.acc{border:1px solid var(--n2);border-radius:4px;overflow:hidden;}
+.acc-h{display:flex;align-items:center;gap:8px;padding:9px 10px;cursor:pointer;background:#fff;}
+.acc-h svg{width:14px;height:14px;color:var(--n5);flex:none;}
+.acc-h .t{font-weight:700;}
+.acc-h .num{font-size:9px;color:var(--n4);font-weight:700;width:12px;}
+.acc-h .sum{margin-left:auto;font-size:10px;color:var(--n5);font-weight:400;text-align:right;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.acc-h .chev{color:var(--n4);transition:transform .15s;flex:none;}
+.acc.open>.acc-h .chev{transform:rotate(90deg);}
+.acc-b{display:none;padding:10px;flex-direction:column;gap:9px;border-top:1px solid var(--n2);}
+.acc.open>.acc-b{display:flex;}
+.tier>.acc-b{gap:6px;padding:6px;background:var(--n1);}
+.sub{background:#fff;}
+.tag-fake{font-size:8.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--orange);background:rgba(243,113,43,.12);border-radius:3px;padding:1px 5px;margin-left:6px;}
+.tag-real{font-size:8.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--green);background:rgba(119,178,42,.14);border-radius:3px;padding:1px 5px;margin-left:6px;}
+
+/* controls */
+.help{font-size:10px;color:var(--n5);}
+.rng{display:flex;flex-direction:column;gap:2px;}
+.rng .top{display:flex;justify-content:space-between;font-size:11px;}
+.rng .top .v{color:var(--blue2);font-weight:700;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;}
+input[type=range]{-webkit-appearance:none;appearance:none;height:2px;background:var(--n3);border-radius:2px;width:100%;outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--blue);cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.25);}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--blue);cursor:pointer;}
+select.fld{width:100%;font-family:var(--font);font-size:11px;background:var(--n2);border:none;border-radius:4px;height:26px;padding:0 8px;cursor:pointer;}
+.crow{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.crow span{font-size:11px;}
+input[type=color]{width:34px;height:22px;border:none;border-radius:5px;background:none;padding:0;cursor:pointer;}
+.chk{display:flex;align-items:center;gap:7px;font-size:11px;cursor:pointer;}
+.chk input{accent-color:var(--blue);width:13px;height:13px;}
+
+/* bond grid */
+.bondgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.bond{font-family:var(--font);font-size:10px;font-weight:500;color:var(--n6);background:var(--n1);border:1px solid var(--n3);border-radius:4px;padding:7px 3px;cursor:pointer;text-align:center;}
+.bond:hover{border-color:var(--blue);}
+.bond.on{background:var(--tint);border-color:var(--blue);color:var(--blue2);font-weight:700;}
+
+/* theme tabs */
+.themes{display:flex;gap:6px;}
+.theme{flex:1;font-family:var(--font);font-size:11px;font-weight:700;color:var(--n6);background:var(--n1);border:1px solid var(--n3);border-radius:4px;padding:8px 4px;cursor:pointer;}
+.theme:hover{border-color:var(--blue);}
+.theme.on{background:var(--tint);border-color:var(--blue);color:var(--blue2);}
+
+/* anchors */
+.anc{display:grid;grid-template-columns:42px 1fr auto;gap:9px;align-items:center;padding:6px 0;border-top:1px solid var(--n1);}
+.anc:first-child{border-top:none;}
+.anc.off{opacity:.5;}
+.anc-thumb{width:42px;height:42px;border-radius:4px;border:1px solid var(--n3);overflow:hidden;cursor:pointer;background:var(--n1);}
+.anc-thumb canvas{display:block;width:100%;height:100%;}
+.anc-main{min-width:0;display:flex;flex-direction:column;gap:3px;}
+.anc-name{font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;}
+.anc-name:hover{color:var(--blue2);}
+.anc-srow{display:flex;align-items:center;gap:8px;}
+.anc-srow input[type=range]{flex:1;}
+.anc-pct{font-size:10px;color:var(--n5);width:32px;text-align:right;}
+.anc-btns{display:flex;gap:4px;}
+.anc-ic{width:24px;height:24px;border:1px solid var(--n3);border-radius:4px;background:#fff;color:var(--n6);cursor:pointer;display:grid;place-items:center;padding:0;}
+.anc-ic svg{width:13px;height:13px;}
+.anc-ic.act{background:var(--tint);border-color:var(--blue);color:var(--blue2);}
+.anc-ic.dim{color:var(--n4);}
+.anc-thumb{position:relative;}
+.anc:hover{background:var(--n1);}
+.anc-thumb:hover{outline:2px solid var(--blue);outline-offset:-1px;}
+.thumb-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:transparent;background:rgba(13,181,255,0);transition:.12s;pointer-events:none;}
+.anc-thumb:hover .thumb-ov,.mat-row .anc-thumb:hover .thumb-ov{color:#fff;background:rgba(13,181,255,.42);}
+.dist-err{display:none;font-size:10px;font-weight:700;color:var(--red);background:rgba(225,22,28,.08);border:1px solid rgba(225,22,28,.3);border-radius:4px;padding:5px 7px;margin-top:6px;}
+.mat-row{display:flex;align-items:center;gap:9px;}
+.mat-row .nm{font-size:11px;font-weight:600;flex:1;cursor:pointer;}
+.mat-row .nm:hover{color:var(--blue2);}
+.lib-search{width:100%;height:30px;border:1px solid var(--n3);border-radius:var(--pill);padding:0 12px;font-family:var(--font);font-size:11px;margin-bottom:8px;}
+.img-pick{position:relative;width:100%;height:240px;border-radius:6px;overflow:hidden;background:linear-gradient(135deg,#7a5a44,#9c7a5c);}
+.hot{position:absolute;border:2px solid transparent;border-radius:3px;cursor:pointer;transition:.1s;}
+.hot:hover{border-color:#fff;box-shadow:0 0 0 2px rgba(13,181,255,.6);}
+.hot.on{border-color:var(--blue);box-shadow:0 0 0 3px var(--tint);}
+.addA{border:1px dashed var(--n3);border-radius:4px;padding:7px;text-align:center;font-size:10px;color:var(--n5);cursor:pointer;margin-top:6px;}
+.addA:hover{border-color:var(--blue);color:var(--blue2);}
+/* change-material modal */
+.modal{position:fixed;inset:0;background:rgba(20,20,22,.55);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:50;}
+.modal.show{display:flex;}
+.modal-card{width:420px;max-width:92vw;max-height:88vh;overflow:auto;background:#fff;border-radius:8px;box-shadow:0 18px 50px rgba(0,0,0,.5);padding:16px;color:var(--black);}
+.modal-h{display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:8px;}
+.modal-h button{border:none;background:var(--n2);width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:14px;color:var(--n6);}
+.modal-sec-t{font-size:9.75px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--n5);margin:12px 0 8px;}
+.lib{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.lib-it{cursor:pointer;border:1px solid var(--n2);border-radius:6px;overflow:hidden;background:var(--n1);}
+.lib-it.on{border-color:var(--blue);box-shadow:0 0 0 2px var(--tint);}
+.lib-it .sw{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;}
+.lib-it .nm{font-size:9px;padding:4px;color:var(--n6);text-align:center;line-height:1.2;}
+.src-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.src-btn{font-family:var(--font);font-size:11px;font-weight:700;border:1px solid var(--n3);background:#fff;border-radius:var(--pill);padding:7px 12px;cursor:pointer;}
+.src-row input{flex:1;min-width:150px;height:30px;border:1px solid var(--n3);border-radius:var(--pill);padding:0 12px;font-family:var(--font);font-size:11px;}
+.modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;}
+.modal-foot button{font-family:var(--font);font-size:12px;font-weight:700;border-radius:var(--pill);padding:8px 16px;cursor:pointer;}
+.modal-foot .cancel{background:#fff;border:1px solid var(--n3);color:var(--n6);}
+.modal-foot .import{border:none;background:var(--blue);color:#fff;box-shadow:0 3px 15px rgba(13,181,255,.5);}
+
+/* save */
+.save{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--n2);padding-top:13px;}
+.save input{width:100%;height:28px;border:1px solid var(--n3);border-radius:4px;padding:0 8px;font-family:var(--font);font-size:11px;}
+.import{font-family:var(--font);font-size:13px;font-weight:700;border:none;border-radius:var(--pill);background:var(--blue);color:#fff;padding:9px;cursor:pointer;box-shadow:0 3px 15px rgba(13,181,255,.5);}
+.import:hover{background:var(--blue-press);}
+.status{font-size:11px;color:var(--n5);min-height:15px;}
+
+/* ---- demo flow: screens, browser home, type picker ---- */
+.bz{width:480px;max-width:100%;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.45);font-size:11px;color:var(--black);}
+.bz-dd{margin:0 12px 10px;height:26px;border:1px solid var(--n2);border-radius:4px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;color:var(--n5);}
+.bz-body{padding:0 12px 16px;display:flex;flex-direction:column;gap:11px;}
+.bz-sec{background:var(--n1);border-radius:4px;padding:3px 8px;font-size:9.75px;color:var(--n6);display:flex;justify-content:space-between;}
+.bz-cats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.bz-cat{background:var(--n1);border-radius:4px;padding:8px 6px;border-top:2px solid var(--n3);}
+.bz-cat .t{font-size:11px;font-weight:700;} .bz-cat .s{font-size:9px;color:var(--n5);}
+.bz-cat.c-red{border-top-color:#E74549;}.bz-cat.c-gold{border-top-color:#F3B830;}.bz-cat.c-blue{border-top-color:var(--blue);cursor:pointer;}.bz-cat.c-green{border-top-color:#77B22A;}
+.bz-cat.c-blue:hover{outline:1px solid var(--blue);outline-offset:-1px;}
+.bz-pop{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.bz-chip{background:var(--n1);border-radius:4px;padding:9px 10px;}
+.bz-promo{border:1px solid var(--blue);border-radius:6px;padding:12px;display:flex;align-items:center;gap:10px;}
+.bz-promo .ic{width:30px;height:30px;border-radius:50%;background:var(--tint);display:grid;place-items:center;color:var(--blue2);flex:none;}
+.bz-promo .ic svg{width:16px;height:16px;}
+.bz-promo .tx{flex:1;} .bz-promo .tx b{font-size:11px;} .bz-promo .tx div{font-size:10px;color:var(--n5);}
+.bz-promo button{background:var(--blue);color:#fff;border:none;border-radius:var(--pill);padding:7px 16px;font-family:var(--font);font-size:11px;font-weight:700;cursor:pointer;box-shadow:0 3px 15px rgba(13,181,255,.5);}
+.bz-cols{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.bz-col{background:var(--n1);border-radius:4px;padding:8px 10px;font-size:11px;font-weight:700;}.bz-col span{display:block;font-size:9px;color:var(--n5);font-weight:400;}
+.bz-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
+.bz-card{background:var(--n1);border-radius:4px;overflow:hidden;position:relative;}
+.bz-card .th{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;}.bz-card .nm{font-size:10px;font-weight:700;padding:5px 6px;}
+.bz-card .new{position:absolute;left:5px;top:5px;background:#589800;color:#fff;font-size:9px;font-weight:700;border-radius:4px;padding:1px 5px;}
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.type-it{border:1px solid var(--n2);border-radius:8px;padding:11px 8px;text-align:center;cursor:pointer;background:#fff;transition:.12s;}
+.type-it:hover{border-color:var(--blue);}
+.type-it.on{border-color:var(--blue);box-shadow:0 0 0 2px var(--tint);}
+.type-it.soon{opacity:.5;cursor:not-allowed;}
+.type-it .sw{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:5px;margin-bottom:7px;display:block;}
+.type-it .nm{font-size:11px;font-weight:700;}
+.type-it .bd{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:3px;}
+.type-it .bd.live{color:var(--green);}.type-it .bd.av{color:var(--blue2);}.type-it .bd.cs{color:var(--n4);}
+.modal-foot button[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none;}
+.ing-tabs{display:flex;gap:6px;}
+.ing-tab{flex:1;font-family:var(--font);font-size:11px;font-weight:700;color:var(--n6);background:var(--n1);border:1px solid var(--n3);border-radius:4px;padding:7px;cursor:pointer;}
+.ing-tab.on{background:var(--tint);border-color:var(--blue);color:var(--blue2);}
+.ing-drop{border:1px dashed var(--n3);border-radius:6px;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;font-size:11px;color:var(--n5);cursor:pointer;overflow:hidden;padding:10px;}
+.ing-drop:hover{border-color:var(--blue);}
+.ing-drop.has{padding:0;border-style:solid;border-color:var(--n2);}
+.ing-drop img{width:100%;height:210px;object-fit:cover;display:block;}
+.ing-drop .dz-ic{font-size:24px;color:var(--n4);}
+.ing-try{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--n5);}
+.ing-try button{background:none;border:none;color:var(--blue2);font-weight:700;cursor:pointer;font-family:var(--font);font-size:11px;}
+.ing-url-in{width:100%;height:30px;border:1px solid var(--n3);border-radius:var(--pill);padding:0 12px;font-family:var(--font);font-size:11px;}
+#ingProgress{text-align:center;padding:22px 0;}
+#ingStatus{font-size:12px;font-weight:700;color:var(--blue2);}
+.ing-spinner{width:24px;height:24px;border:3px solid var(--n2);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gen-btn{align-self:center;background:var(--blue);color:#fff;border:none;border-radius:var(--pill);padding:8px 22px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 15px rgba(13,181,255,.5);}
+.gen-btn:hover{background:var(--blue-press);}
+.gen-btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none;}
+
+/* ---- Surface 6: Enscape desktop ---- */
+.en{width:100vw;height:100vh;background:#fff;border:none;border-radius:0;overflow:hidden;box-shadow:none;font-family:var(--font-en);color:#3B3B3B;user-select:none;display:flex;flex-direction:column;}
+.en-os{height:52px;background:#fff;border-bottom:1px solid #E8E8E8;display:flex;align-items:center;gap:8px;padding:0 8px;}
+.en-os .lg{width:18px;height:18px;border-radius:4px;background:var(--en-orange);display:grid;place-items:center;flex:none;}
+.en-os .lg svg{width:14px;height:14px;display:block;}
+.en-os .ti{font-size:12px;color:#414141;}
+.en-os .sp{flex:1;}
+.en-os .wc{width:24px;text-align:center;color:#9a9a9a;font-size:11px;}
+.en-os .wc:last-child{color:#c0392b;}
+.en-tools{height:40px;background:var(--n1);border-bottom:1px solid var(--n2);display:flex;align-items:center;gap:1px;padding:0 6px;overflow:hidden;}
+.en-tools-grp{display:flex;align-items:center;gap:1px;}
+.en-sp{flex:1;}
+.en-tb{width:28px;height:28px;border-radius:3px;display:grid;place-items:center;color:#414141;cursor:default;position:relative;flex:none;}
+.en-tb:hover{background:#ececec;}
+.en-tb.on{background:var(--en-tint);color:#0B7FB4;}
+.en-tb svg{width:17px;height:17px;display:block;}
+.en-tb.car::after{content:"";position:absolute;right:1px;bottom:4px;border-left:3px solid transparent;border-right:3px solid transparent;border-top:4px solid var(--en-blue2);}
+.en-div{width:1px;height:22px;background:#C4C4C4;margin:0 5px;flex:none;}
+.en-main{display:flex;flex:1;min-height:0;}
+.en-side{width:236px;background:#fff;border-right:1px solid var(--n2);display:flex;flex-direction:column;flex:none;}
+.en-side-h{height:34px;display:flex;align-items:center;gap:6px;padding:0 10px;border-bottom:1px solid var(--n2);font-size:14px;font-weight:600;color:#3B3B3B;}
+.en-side-search{margin:8px;height:28px;background:var(--n1);border-radius:4px;display:flex;align-items:center;gap:6px;padding:0 8px;color:#828282;font-size:11px;}
+.en-side-body{flex:1;overflow:auto;padding:0 8px;}
+.en-sec{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#9a9a9a;margin:11px 4px 6px;}
+.en-matcard{display:flex;align-items:center;gap:9px;padding:8px;border:1px solid var(--n2);border-radius:6px;cursor:pointer;position:relative;transition:.12s;}
+.en-matcard:hover{border-color:var(--en-blue);background:#F7FBFE;}
+.en-matcard.sel{border-color:var(--en-blue);box-shadow:0 0 0 2px var(--en-tint);}
+.en-matcard .sw{width:40px;height:40px;border-radius:5px;flex:none;background-size:cover;background-position:center;border:1px solid var(--n2);}
+.en-matcard .mt{font-size:13px;font-weight:600;}
+.en-matcard .ms{font-size:10px;color:#828282;}
+.en-matcard .nw{position:absolute;right:6px;top:6px;background:#589800;color:#fff;font-size:8px;font-weight:700;border-radius:3px;padding:1px 4px;}
+.en-view-item{display:flex;align-items:center;gap:7px;padding:6px 4px;border-radius:4px;font-size:12px;color:#3B3B3B;cursor:default;}
+.en-view-item:hover{background:#F2F9FD;}
+.en-view-item .vi{width:14px;height:14px;color:#9a9a9a;flex:none;}
+.en-side-foot{padding:8px;border-top:1px solid var(--n2);display:flex;justify-content:flex-end;}
+.en-create{background:var(--en-blue);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-family:var(--font-en);font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 1px 2px rgba(16,24,40,.05);}
+.en-view{flex:1;position:relative;overflow:hidden;background:#0d1014;}
+.en-layer{position:absolute;inset:0;display:none;}
+.en-layer.show{display:block;}
+.en-layer.refining{filter:blur(13px) saturate(.5) brightness(1.14);}
+.en-layer.settle{transition:filter .9s ease-out;filter:none;}
+.en-layer img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+.en-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#eef1f5;font-size:14px;font-weight:600;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.4);}
+.en-ph .pl{font-size:11px;font-weight:400;color:#e9ecf0;background:rgba(0,0,0,.28);border:1px dashed rgba(255,255,255,.4);border-radius:6px;padding:6px 12px;font-family:var(--mono);}
+.en-ph.sky{background:linear-gradient(#9fc0de 0%,#c4d8e8 47%,#ccc3b2 53%,#a89a82 100%);}
+.en-ph.brickA{background:linear-gradient(#9fc0de 0%,#c4d8e8 45%,#9c6b4f 55%,#74452f 100%);}
+.en-ph.brickB{background:linear-gradient(#9fc0de 0%,#c4d8e8 45%,#5f4338 55%,#3a2c25 100%);}
+.en-vlabel{position:absolute;left:12px;top:10px;background:rgba(13,17,20,.55);color:#fff;font-size:11px;font-weight:600;padding:4px 9px;border-radius:5px;backdrop-filter:blur(4px);}
+.en-toast{position:absolute;left:50%;top:16px;transform:translateX(-50%);background:rgba(20,22,25,.88);color:#fff;font-size:12px;font-weight:600;padding:7px 14px;border-radius:8px;opacity:0;transition:opacity .3s;pointer-events:none;display:flex;align-items:center;gap:8px;}
+.en-toast.show{opacity:1;}
+.en-toast .ok{width:16px;height:16px;border-radius:50%;background:#589800;display:grid;place-items:center;color:#fff;font-size:10px;}
+.en-bottom{height:28px;background:var(--n1);border-top:1px solid var(--n2);display:flex;align-items:center;padding:0 12px;gap:14px;font-size:11px;color:#828282;}
+.en-bottom .dot{width:7px;height:7px;border-radius:50%;background:#589800;flex:none;}
+.en-bottom .lk{color:var(--en-blue2);font-weight:600;cursor:pointer;}
+.en-bottom .lk:hover{text-decoration:underline;}
+/* presenter controls — always-on-top cluster (mirrors the Enscape On-Site rail buttons) */
+.pz-bar{position:fixed;top:8px;right:14px;z-index:30;display:flex;align-items:center;gap:8px;}/* on the main surface: above the render, below the Cosmos pop-up (40) and all modals (50/60) so an open panel covers these */
+.pz-act{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--n3);border-radius:9px;padding:9px 14px;font-family:var(--font);font-size:12px;font-weight:700;color:var(--black);cursor:pointer;transition:.12s;}
+.pz-act:hover{background:var(--n1);border-color:var(--n4);}
+.pz-act svg{width:16px;height:16px;color:var(--n5);flex:none;}
+.pz-act.prime{background:var(--red);color:#fff;}
+.pz-act.prime svg{color:#fff;}
+.pz-act.prime:hover{background:#b5161c;}
+.pz-export{background:rgba(13,17,20,.55);backdrop-filter:blur(4px);border:none;color:#e8eaed;font-family:var(--font);font-size:10.5px;font-weight:600;cursor:pointer;padding:6px 11px;border-radius:7px;align-self:stretch;}
+.pz-export:hover{color:#fff;background:rgba(13,17,20,.72);}
+
+/* Cosmos launcher in the Enscape toolbar */
+.en-tb.cosmos{width:30px;height:30px;}
+.en-tb.cosmos svg{width:20px;height:20px;border-radius:3px;}
+.en-tb.cosmos.on{background:var(--en-tint);}
+.en-tb.cosmos.pulse{animation:cosPulse 1.9s ease-in-out infinite;}
+@keyframes cosPulse{0%,100%{box-shadow:0 0 0 0 rgba(13,181,255,0)}50%{box-shadow:0 0 0 5px rgba(13,181,255,.4)}}
+
+/* live render-refinement tag (sells "live", no crossfade) */
+.en-refine-tag{position:absolute;left:12px;bottom:12px;display:none;align-items:center;gap:8px;background:rgba(13,17,20,.72);color:#fff;font-size:11px;font-weight:600;padding:6px 12px;border-radius:7px;backdrop-filter:blur(4px);}
+.en-refine-tag.show{display:flex;}
+.en-refine-tag .sp{width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+
+/* ---- Cosmos floating pop-up over Enscape ---- */
+.cos-pop{position:fixed;z-index:40;top:62px;right:34px;width:480px;max-width:calc(100vw - 40px);max-height:calc(100vh - 110px);overflow:auto;border-radius:8px;box-shadow:0 26px 80px rgba(0,0,0,.55);}
+.cos-pop .cz,.cos-pop .bz{width:100%;max-width:none;border-radius:8px;box-shadow:none;margin:0;}
+.cos-pane{display:none;}
+.cos-pane.show{display:block;}
+.cos-pop .cz-title{cursor:grab;}
+.cos-pop .cz-title.drag{cursor:grabbing;}
+.cz-x{margin-left:6px;width:15px;height:15px;border-radius:3px;display:grid;place-items:center;font-size:13px;line-height:1;color:var(--n6);cursor:pointer;}
+.cz-x:hover{background:var(--n3);color:var(--black);}
+
+/* ---- Surface 8: Chaos-branded quantity takeoff ---- */
+.tk-modal{z-index:60;align-items:flex-start;overflow:auto;padding:24px 0;}
+.tk-doc{width:820px;max-width:94vw;margin:0 auto;}
+.tk-actions{display:flex;justify-content:flex-end;gap:8px;margin-bottom:12px;}
+.tk-btn{font-family:var(--font);font-size:12px;font-weight:700;border:none;border-radius:var(--pill);padding:9px 16px;cursor:pointer;background:#fff;color:var(--n7);box-shadow:0 2px 10px rgba(0,0,0,.25);}
+.tk-btn.prime{background:var(--blue);color:#fff;}
+.tk-btn.ghost{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);box-shadow:none;}
+.tk-page{background:#fff;border-radius:6px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.5);color:#1C1C1C;font-family:var(--font);}
+.tk-band{background:var(--red);color:#fff;padding:22px 28px;display:flex;align-items:center;gap:16px;}
+.tk-band .lg{width:40px;height:40px;border-radius:6px;overflow:hidden;flex:none;}
+.tk-band h1{font-size:22px;font-weight:700;line-height:1.1;}
+.tk-band .sub{font-size:12px;opacity:.85;font-weight:500;letter-spacing:.04em;text-transform:uppercase;}
+.tk-band .sp{flex:1;}
+.tk-band .ref{font-size:11px;opacity:.85;text-align:right;line-height:1.5;}
+.tk-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--n2);}
+.tk-meta>div{background:#fff;padding:12px 16px;}
+.tk-meta .k{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--n5);}
+.tk-meta .v{font-size:14px;font-weight:700;margin-top:3px;}
+.tk-body{padding:8px 28px 28px;}
+.tk-sec{margin-top:22px;}
+.tk-sec h2{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue2);border-bottom:2px solid var(--n2);padding-bottom:6px;margin-bottom:10px;}
+.tk-spec{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 24px;}
+.tk-spec .r{display:flex;justify-content:space-between;font-size:12px;border-bottom:1px dotted var(--n3);padding:4px 0;}
+.tk-spec .r span:first-child{color:var(--n5);}
+.tk-spec .r span:last-child{font-weight:600;}
+table.tk-tbl{width:100%;border-collapse:collapse;font-size:11.5px;}
+table.tk-tbl th{text-align:right;font-weight:700;color:var(--n6);border-bottom:2px solid var(--n3);padding:7px 8px;font-size:10px;text-transform:uppercase;letter-spacing:.03em;}
+table.tk-tbl th:first-child,table.tk-tbl td:first-child{text-align:left;}
+table.tk-tbl td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--n2);}
+table.tk-tbl tr.tot td{font-weight:700;border-top:2px solid var(--n3);border-bottom:none;background:var(--n1);}
+table.tk-tbl .sw{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:7px;vertical-align:-1px;border:1px solid rgba(0,0,0,.15);}
+.tk-hi{display:flex;gap:14px;margin-top:6px;}
+.tk-hi .card{flex:1;background:var(--n1);border-radius:6px;padding:12px 14px;}
+.tk-hi .card .big{font-size:24px;font-weight:700;}
+.tk-hi .card .lbl{font-size:10px;color:var(--n5);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:3px;}
+.tk-foot{margin-top:24px;padding-top:14px;border-top:1px solid var(--n2);font-size:10px;color:var(--n5);line-height:1.6;}
+@media print{
+  body *{visibility:hidden!important;}
+  #tkModal,#tkModal *{visibility:visible!important;}
+  #tkModal{position:absolute;inset:0;background:#fff;display:block!important;overflow:visible;padding:0;}
+  .tk-actions{display:none!important;}
+  .tk-doc{width:100%;max-width:none;}
+  .tk-page{box-shadow:none;border-radius:0;}
+  .tk-sec,table.tk-tbl tr{break-inside:avoid;}
+}
+
+/* ---- Customer feedback survey ---- */
+.fb-modal .modal-card{width:460px;}
+.fb-q{margin:14px 0 6px;font-size:12px;font-weight:600;color:var(--n7);}
+.fb-q .opt{color:var(--n5);font-weight:400;font-size:11px;}
+.fb-stars{display:flex;gap:6px;}
+.fb-star{font-size:27px;line-height:1;color:var(--n3);cursor:pointer;transition:color .1s;}
+.fb-star:hover,.fb-star.on{color:#F3B830;}
+.fb-seg{display:flex;gap:6px;flex-wrap:wrap;}
+.fb-seg button{flex:1;min-width:72px;font-family:var(--font);font-size:11px;font-weight:700;color:var(--n6);background:var(--n1);border:1px solid var(--n3);border-radius:var(--pill);padding:7px 8px;cursor:pointer;}
+.fb-seg button:hover{border-color:var(--blue);}
+.fb-seg button.on{background:var(--tint);border-color:var(--blue);color:var(--blue2);}
+.fb-ta{width:100%;min-height:62px;border:1px solid var(--n3);border-radius:6px;padding:8px;font-family:var(--font);font-size:12px;resize:vertical;}
+.fb-in{width:100%;height:32px;border:1px solid var(--n3);border-radius:6px;padding:0 10px;font-family:var(--font);font-size:12px;}
+.fb-mini{font-size:10px;color:var(--red);margin-top:8px;min-height:13px;}
+.fb-thanks{text-align:center;padding:22px 10px 6px;}
+.fb-thanks .fb-ok{width:48px;height:48px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:26px;margin:0 auto 14px;}
+.fb-thanks .big{font-size:18px;font-weight:700;margin-bottom:4px;}
+</style>
+</head>
+<body>
+
+<!-- ============ COSMOS FLOATING POP-UP (over Enscape) ============ -->
+<div class="cos-pop" id="cosmosPop" style="display:none">
+  <div class="cos-pane show" id="cosBrowser">
+    <div class="bz">
+      <div class="cz-title"><span class="logo"><svg class="chaos"></svg></span><span>Chaos Cosmos Browser</span><span class="sp"></span><span class="wc"></span></div>
+      <div class="cz-hdr"><span class="cz-brand"><svg class="chaos"></svg></span><span class="cz-search">Search assets …</span><span class="cz-av">ND</span></div>
+      <div class="bz-dd"><span>Select category</span><span>▾</span></div>
+      <div class="bz-body">
+        <div class="bz-sec"><span>Categories</span></div>
+        <div class="bz-cats">
+          <div class="bz-cat c-red"><div class="t">3D Models</div><div class="s">3000+ assets</div></div>
+          <div class="bz-cat c-gold"><div class="t">Materials</div><div class="s">1000+ assets</div></div>
+          <div class="bz-cat c-blue" id="catAI"><div class="t">AI Materials</div><div class="s">Image to material</div></div>
+          <div class="bz-cat c-green"><div class="t">HDRIs</div><div class="s">100+ assets</div></div>
+        </div>
+        <div class="bz-sec"><span>Most popular</span></div>
+        <div class="bz-pop">
+          <div class="bz-chip">Furniture</div><div class="bz-chip">Accessories</div>
+          <div class="bz-chip">Vegetation</div><div class="bz-chip">Indoor plants</div>
+          <div class="bz-chip">Vehicles</div><div class="bz-chip">People</div>
+          <div class="bz-chip">Lighting</div><div class="bz-chip">Architecture</div>
+        </div>
+        <div class="bz-promo">
+          <div class="ic"><svg class="i-sliders"></svg></div>
+          <div class="tx"><b>Smart Materials</b><div>Generate a procedural, non-repeating surface from a sample. Now in Beta.</div></div>
+          <button id="smGenerate">Generate</button>
+        </div>
+        <div class="bz-sec"><span>Collections</span><span style="color:var(--blue2)">View all ›</span></div>
+        <div class="bz-cols">
+          <div class="bz-col">V-Ray Material Library<span>545 assets</span></div>
+          <div class="bz-col">Corona Material Library<span>53 assets</span></div>
+        </div>
+        <div class="bz-sec"><span>Recently added</span></div>
+        <div class="bz-grid">
+          <div class="bz-card"><span class="new">New</span><img class="th" src="brick.png" alt=""><div class="nm">Facade brick</div></div>
+          <div class="bz-card"><span class="new">New</span><img class="th" src="wood.png" alt=""><div class="nm">Oak cladding</div></div>
+          <div class="bz-card"><span class="new">New</span><img class="th" src="tile.png" alt=""><div class="nm">Ceramic tile</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cos-pane" id="cosIngest">
+    <div class="cz">
+      <div class="cz-title"><span class="logo"><svg class="chaos"></svg></span><span>Chaos Cosmos Browser</span><span class="sp"></span><span class="wc"></span></div>
+      <div class="cz-hdr"><span class="cz-brand"><svg class="chaos"></svg></span><span class="cz-search">Search assets …</span><span class="cz-av">ND</span></div>
+      <div class="cz-crumb">Materials › AI Materials › Brick</div>
+      <div class="cz-body">
+        <div class="cz-mat"><div class="cz-mat-row"><h1>New Smart Material · Brick</h1><span class="badge">Beta</span></div></div>
+        <div id="ingForm" style="display:flex;flex-direction:column;gap:12px">
+          <div class="ing-tabs"><button class="ing-tab on" data-m="image">From image</button><button class="ing-tab" data-m="url">From manufacturer URL</button></div>
+          <div id="ingImagePane" style="display:flex;flex-direction:column;gap:8px">
+            <div class="ing-drop" id="ingDrop"><div class="dz-ic">⬆</div><div>Click to add or drop an elevation photo<br><span style="color:var(--n4)">jpg / png / tiff / webp</span></div></div>
+            <div class="ing-try"><span>Booth tip: use the prepared sample.</span><button id="ingSample">Try this sample ›</button></div>
+          </div>
+          <div id="ingUrlPane" style="display:none;flex-direction:column;gap:6px">
+            <input class="ing-url-in" id="ingUrl" placeholder="Paste a manufacturer URL, e.g. petersen-tegl.dk/...">
+            <div class="help">A product URL initializes a factory-linked, spec-tracked material (faked for the demo).</div>
+          </div>
+          <button class="gen-btn" id="ingGenerate" disabled>Generate</button>
+        </div>
+        <div id="ingProgress" style="display:none"><div class="ing-spinner"></div><div id="ingStatus">Detecting pattern…</div></div>
+        <div class="status" id="ingNote">Drop a photo or paste a manufacturer URL, then Generate.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cos-pane" id="cosEditor">
+    <div class="cz">
+      <div class="cz-title"><span class="logo"><svg class="chaos"></svg></span><span>Chaos Cosmos Browser</span><span class="sp"></span><span class="wc"></span></div>
+      <div class="cz-hdr"><span class="cz-brand"><svg class="chaos"></svg></span><span class="cz-search">Search assets …</span><span class="cz-av">ND</span></div>
+      <div class="cz-crumb">Materials › AI Materials</div>
+      <div class="cz-body">
+
+        <div class="cz-mat">
+          <div class="cz-mat-row"><h1>Main Facade Brick</h1><span class="badge">Beta</span></div>
+          <label class="cz-opt"><span>Option</span>
+            <select id="optSel"><option value="A">Option A - Default mortar</option><option value="B">Option B - Dark mortar</option></select>
+          </label>
+        </div>
+
+        <div class="pv">
+          <div class="pv-tabs">
+            <button class="pv-tab on" data-v="lit">Lit</button>
+            <button class="pv-tab" data-v="normal">Normal</button>
+            <button class="pv-tab" data-v="depth">Depth</button>
+            <button class="pv-tab" data-v="ao">AO</button>
+          </div>
+          <div class="pv-cv"><canvas id="main"></canvas><div class="pv-badge" id="modeBadge">preview</div></div>
+          <div class="pv-foot"><span class="mono" id="pInfo">Ready</span><span class="pv-mini"><button id="viewToggle">Full Wall</button></span></div>
+          <div class="mono" id="sts" style="font-family:var(--mono);font-size:9px;color:var(--n4)"></div>
+        </div>
+
+        <!-- ADVANCED doorway -->
+        <div class="adv" id="adv">
+          <div class="adv-h" data-acc>Advanced parameters<span class="chev">›</span></div>
+          <div class="adv-b">
+
+            <!-- TIER 1 -->
+            <div class="acc tier open">
+              <div class="acc-h" data-acc><span class="num">1</span><svg class="i-image"></svg><span class="t">Composition</span><span class="sum" id="sum1">5 samples</span><span class="chev">›</span></div>
+              <div class="acc-b">
+                <div class="acc sub hero">
+                  <div class="acc-h" data-acc><span class="t">Representative samples</span><span class="tag-real">live</span><span class="sum" id="sumAnc"></span><span class="chev">›</span></div>
+                  <div class="acc-b">
+                    <div class="help">Representative samples selected from AI analysis of the source.</div>
+                    <div id="aList"></div>
+                    <div class="dist-err" id="distErr"></div>
+                    <div class="addA" id="addA">+ Add sample</div>
+                  </div>
+                </div>
+                <div class="acc sub tray">
+                  <div class="acc-h" data-acc><span class="t">Mortar</span><span class="tag-real">live</span><span class="sum" id="sumMortar"></span><span class="chev">›</span></div>
+                  <div class="acc-b">
+                    <div class="help">The joint fill, treated as a material. Changing it is what makes a saved edit an Option (same material, new mortar).</div>
+                    <div class="mat-row" id="mortarRow"></div>
+                    <div class="crow"><span>Fine-tune color</span><input type="color" id="jCol" value="#b8ada0"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TIER 2 -->
+            <div class="acc tier open">
+              <div class="acc-h" data-acc><span class="num">2</span><svg class="i-grid"></svg><span class="t">Geometry</span><span class="sum" id="sum2">Running ½</span><span class="chev">›</span></div>
+              <div class="acc-b">
+
+                <div class="acc sub hero">
+                  <div class="acc-h" data-acc><span class="t">Bond pattern</span><span class="tag-real">live</span><span class="sum" id="sumBond">Running ½</span><span class="chev">›</span></div>
+                  <div class="acc-b"><div class="bondgrid" id="bondGrid"></div><select id="bond" style="display:none"></select></div>
+                </div>
+
+                <div class="acc sub tray">
+                  <div class="acc-h" data-acc><span class="t">Size preset</span><span class="tag-real">live</span><span class="sum" id="sumSize">Modular</span><span class="chev">›</span></div>
+                  <div class="acc-b">
+                    <select class="fld" id="sizePreset">
+                      <option value="modular">Modular (7⅝ × 2¼ × 3⅝)</option>
+                      <option value="roman">Roman (11⅝ × 1⅝ × 3⅝)</option>
+                      <option value="norman">Norman (11⅝ × 2¼ × 3⅝)</option>
+                      <option value="utility">Utility (11⅝ × 3⅝ × 3⅝)</option>
+                      <option value="custom">Custom…</option>
+                    </select>
+                    <div id="customDims" style="display:none">
+                      <div class="grid2" style="margin-top:8px">
+                        <div class="rng"><div class="top"><label>Length</label><span class="v" id="v_eL">7⅝"</span></div><input type="range" id="eL" min="2" max="24" step="0.125" value="7.625"></div>
+                        <div class="rng"><div class="top"><label>Course height</label><span class="v" id="v_eH">2¼"</span></div><input type="range" id="eH" min="0.5" max="8" step="0.125" value="2.25"></div>
+                        <div class="rng"><div class="top"><label>Depth</label><span class="v" id="v_eD">3⅝"</span></div><input type="range" id="eD" min="1" max="8" step="0.125" value="3.625"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="acc sub tray">
+                  <div class="acc-h" data-acc><span class="t">Joint tooling &amp; dimensions</span><span class="chev">›</span></div>
+                  <div class="acc-b">
+                    <span style="font-size:11px">Tooling profile</span>
+                    <select class="fld" id="jProfile">
+                      <option value="concave">Concave (tooled)</option><option value="flush">Flush</option><option value="raked">Raked</option>
+                      <option value="weathered">Weathered (angled)</option><option value="vee">V-Joint</option><option value="struck">Struck</option><option value="beaded">Beaded</option>
+                    </select>
+                    <div class="rng"><div class="top"><label>Joint width</label><span class="v" id="v_jW">⅜"</span></div><input type="range" id="jW" min="0" max="1.5" step="0.0625" value="0.375"></div>
+                    <div class="rng"><div class="top"><label>Joint depth</label><span class="v" id="v_jD">¼"</span></div><input type="range" id="jD" min="0" max="1" step="0.0625" value="0.25"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TIER 3 -->
+            <div class="acc tier open">
+              <div class="acc-h" data-acc><span class="num">3</span><svg class="i-sliders"></svg><span class="t">Variability</span><span class="sum" id="sum3">Pristine</span><span class="chev">›</span></div>
+              <div class="acc-b">
+
+                <div class="acc sub hero">
+                  <div class="acc-h" data-acc><span class="t">Presets</span><span class="tag-real">live</span><span class="sum" id="sumTheme">Pristine</span><span class="chev">›</span></div>
+                  <div class="acc-b">
+                    <div class="themes"><button class="theme on" data-th="pristine">Pristine</button><button class="theme" data-th="weathered">Weathered</button><button class="theme" data-th="reclaimed">Reclaimed</button></div>
+                    <div class="help">Each preset drives the sliders below into a calibrated configuration.</div>
+                  </div>
+                </div>
+
+                <div class="acc sub tray">
+                  <div class="acc-h" data-acc><span class="t">Micro-deformations</span><span class="tag-real">live</span><span class="chev">›</span></div>
+                  <div class="acc-b">
+                    <div class="rng"><div class="top"><label>Material variation</label><span class="v" id="v_mV">0</span></div><input type="range" id="mV" min="0" max="100" value="0"></div>
+                    <div class="rng"><div class="top"><label>Face bow</label><span class="v" id="v_bow">0</span></div><input type="range" id="bow" min="0" max="100" value="0"></div>
+                    <div class="rng"><div class="top"><label>Twist</label><span class="v" id="v_twist">0</span></div><input type="range" id="twist" min="0" max="100" value="0"></div>
+                    <div class="rng"><div class="top"><label>Edge warp</label><span class="v" id="v_warp">0</span></div><input type="range" id="warp" min="0" max="100" value="0"></div>
+                    <label class="chk"><input type="checkbox" id="conP" checked> Maintain overall dimension</label>
+                  </div>
+                </div>
+
+                <div class="acc sub tray">
+                  <div class="acc-h" data-acc><span class="t">Macro-weathering</span><span class="tag-real">live</span><span class="chev">›</span></div>
+                  <div class="acc-b">
+                    <div class="rng"><div class="top"><label>Spot variation</label><span class="v" id="v_spot">10</span></div><input type="range" id="spot" min="0" max="40" value="10"></div>
+                    <div class="rng"><div class="top"><label>Surface noise</label><span class="v" id="v_noise">5</span></div><input type="range" id="noise" min="0" max="20" value="5"></div>
+                    <div class="rng"><div class="top"><label>Dirt</label><span class="v" id="v_dirt">0</span></div><input type="range" id="dirt" min="0" max="100" value="0"></div>
+                    <div class="rng"><div class="top"><label>Efflorescence</label><span class="v" id="v_eff">0</span></div><input type="range" id="eff" min="0" max="100" value="0"></div>
+                  </div>
+                </div>
+
+                <div class="acc sub tray">
+                  <div class="acc-h" data-acc><span class="t">Randomization (seed)</span><span class="chev">›</span></div>
+                  <div class="acc-b">
+                    <div class="rng"><div class="top"><label>Seed</label><span class="v" id="v_sd">42</span></div><input type="range" id="sd" min="1" max="999" value="42"></div>
+                  </div>
+                </div>
+
+                <div class="acc sub tray">
+                  <div class="acc-h" data-acc><span class="t">Preview lighting</span><span class="chev">›</span></div>
+                  <div class="acc-b">
+                    <div class="rng"><div class="top"><label>Sun azimuth</label><span class="v" id="v_az">45°</span></div><input type="range" id="az" min="0" max="360" step="5" value="45"></div>
+                    <div class="rng"><div class="top"><label>Sun elevation</label><span class="v" id="v_el">45°</span></div><input type="range" id="el" min="5" max="85" step="5" value="45"></div>
+                    <div class="rng"><div class="top"><label>Ambient</label><span class="v" id="v_amb">0.25</span></div><input type="range" id="amb" min="0" max="0.6" step="0.05" value="0.25"></div>
+                    <div class="rng" style="display:none"><input type="range" id="sc" min="0.5" max="6" step="0.5" value="2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="save">
+          <input id="saveName" type="text" placeholder="Material name…" value="Main Facade Brick">
+          <button class="import" id="sImport">Import to scene</button>
+          <div class="status" id="status">Adjust anything; the preview re-renders live. Import applies it to the wall and closes Cosmos.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ENSCAPE DESKTOP (always-on base) ============ -->
+    <div class="en">
+      <div class="en-os">
+        <span class="lg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="#fff"/><circle cx="12" cy="12" r="3" fill="#F7941D"/></svg></span>
+        <span class="ti">Enscape · SampleLibraryMuseum.rvt</span>
+      </div>
+      <div class="en-tools"><div class="en-tb cosmos pulse" id="cosLaunch" title="Open Chaos Cosmos"><svg viewBox="0 0 40 40"><use href="#g-cosmos"/></svg></div><div class="en-div"></div><div class="en-tools-grp" id="enTools"></div><span class="en-sp"></span></div>
+      <div class="en-main">
+        <div class="en-side">
+          <div class="en-side-h"><svg viewBox="0 0 24 24" style="width:16px;height:16px;color:#525252"><use href="#g-image"/></svg>Project materials</div>
+          <div class="en-side-search"><svg viewBox="0 0 24 24" style="width:13px;height:13px;color:#828282"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Search materials…</div>
+          <div class="en-side-body">
+            <div class="en-sec">From Cosmos</div>
+            <div class="en-empty" id="enEmpty" style="font-size:11px;color:#9a9a9a;padding:9px;border:1px dashed var(--n3);border-radius:6px;line-height:1.5;cursor:pointer;">No Smart Material yet. Open <b style="color:var(--en-blue2)">Cosmos</b> from the toolbar to author one.</div>
+            <div class="en-matcard" id="enMatCard" style="display:none">
+              <span class="nw">New</span>
+              <span class="sw" style="background-image:url('brick.png')"></span>
+              <span><div class="mt">Main Facade Brick</div><div class="ms" id="enMatSub">Smart Material · live link</div></span>
+            </div>
+            <div class="en-sec">Saved views</div>
+            <div class="en-view-item"><svg class="vi" viewBox="0 0 24 24"><use href="#g-image"/></svg>Exterior · Camera 01</div>
+            <div class="en-view-item"><svg class="vi" viewBox="0 0 24 24"><use href="#g-image"/></svg>Courtyard</div>
+            <div class="en-view-item"><svg class="vi" viewBox="0 0 24 24"><use href="#g-image"/></svg>Entry approach</div>
+          </div>
+          <div class="en-side-foot"><button class="en-create">Create View</button></div>
+        </div>
+        <div class="en-view" id="enView">
+          <div class="en-layer show" id="enLBare"><div class="en-ph sky"><div>Before · existing facade</div><div class="pl">renders/Pre.png</div></div><img src="Pre.png" alt="" onerror="this.remove()"></div>
+          <div class="en-layer" id="enLA"><div class="en-ph brickA"><div>Applied · Smart Material (Option A)</div><div class="pl">renders/Post.png</div></div><img src="Post.png" alt="" onerror="this.remove()"></div>
+          <div class="en-layer" id="enLB"><div class="en-ph brickB"><div>Applied · Smart Material (Option B)</div><div class="pl">renders/Post.png</div></div><img src="Post.png" alt="" onerror="this.remove()"></div>
+          <div class="en-vlabel">Exterior · Camera 01</div>
+          <div class="en-refine-tag" id="enRefine"><span class="sp"></span>Updating render…</div>
+          <div class="en-toast" id="enToast"><span class="ok">✓</span><span id="enToastMsg">Applied</span></div>
+        </div>
+      </div>
+      <div class="en-bottom"><span class="dot"></span>Live link · Revit synced<span style="flex:1"></span><span>1920 × 1080</span><span>RTX · 60 fps</span></div>
+    </div>
+
+<!-- presenter controls — always-on-top; clear buttons mirroring the Enscape On-Site rail -->
+<div class="pz-bar">
+  <button class="pz-act" id="pzTakeoff"><svg viewBox="0 0 24 24"><use href="#g-doc"/></svg>Quantity takeoff</button>
+  <button class="pz-act" id="pzFeedback"><svg viewBox="0 0 24 24"><use href="#g-bubble"/></svg>Share feedback</button>
+  <button class="pz-act" id="pzReset"><svg viewBox="0 0 24 24"><use href="#g-refresh"/></svg>Reset demo</button>
+  <button class="pz-export" id="pzExport">Export feedback CSV</button>
+</div>
+
+<div class="modal" id="chgModal">
+  <div class="modal-card">
+    <div class="modal-h"><span id="chgTitle">Change material</span><button id="chgClose">×</button></div>
+    <div id="chgMain">
+      <div class="modal-sec-t">Cosmos library</div>
+      <input id="libSearch" class="lib-search" placeholder="Search materials…">
+      <div class="lib" id="lib"></div>
+      <div class="modal-sec-t">Or from a source</div>
+      <div class="src-row">
+        <button class="src-btn" id="srcImage">Select from image</button>
+        <input id="srcUrl" placeholder="Paste manufacturer URL…">
+        <button class="src-btn" id="srcFetch">Ingest</button>
+      </div>
+    </div>
+    <div id="chgImage" style="display:none">
+      <div class="modal-sec-t">Original source · hover a brick, then Select <span class="tag-fake" style="margin-left:6px">demo · pre-isolated</span></div>
+      <div class="img-pick" id="imgPick"></div>
+      <button class="src-btn" id="imgBack" style="margin-top:10px">‹ Back to library</button>
+    </div>
+    <div class="modal-foot"><button class="cancel" id="chgCancel">Cancel</button><button class="import" id="chgSelect">Select</button></div>
+  </div>
+</div>
+
+<div class="modal" id="typeModal">
+  <div class="modal-card" style="width:540px">
+    <div class="modal-h"><span>New Smart Material · choose a surface</span><button id="typeClose">×</button></div>
+    <div class="type-grid" id="typeGrid"></div>
+    <div class="modal-foot" style="justify-content:space-between;align-items:center">
+      <span class="help" id="typeNote" style="text-align:left;flex:1;margin-right:12px"></span>
+      <span style="display:flex;gap:8px"><button class="cancel" id="typeCancel">Cancel</button><button class="import" id="typeStart">Start</button></span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Surface 8: branded quantity takeoff ===== -->
+<div class="modal tk-modal" id="tkModal">
+  <div class="tk-doc">
+    <div class="tk-actions">
+      <button class="tk-btn" id="tkCsv">Export CSV</button>
+      <button class="tk-btn prime" id="tkPdf">Export PDF</button>
+      <button class="tk-btn ghost" id="tkClose">Close</button>
+    </div>
+    <div class="tk-page" id="tkPage"></div>
+  </div>
+</div>
+
+<!-- ===== Customer feedback survey ===== -->
+<div class="modal fb-modal" id="fbModal">
+  <div class="modal-card">
+    <div class="modal-h"><span>Quick feedback</span><button id="fbClose">×</button></div>
+    <div id="fbForm">
+      <p class="help">About 30 seconds. It helps us shape Smart Materials.</p>
+      <div class="fb-q">Your role</div>
+      <select class="fld" id="fbRole">
+        <option value="">Select…</option>
+        <option>Architect</option><option>Interior designer</option><option>Landscape architect</option>
+        <option>Engineer</option><option>Visualization specialist</option><option>Educator / student</option><option>Other</option>
+      </select>
+      <div class="fb-q">How useful would this be in your work?</div>
+      <div class="fb-stars" id="fbStars"></div>
+      <div class="fb-q">How likely are you to use it?</div>
+      <div class="fb-seg" id="fbLikely">
+        <button type="button" data-v="Not really">Not really</button><button type="button" data-v="Maybe">Maybe</button><button type="button" data-v="Likely">Likely</button><button type="button" data-v="Definitely">Definitely</button>
+      </div>
+      <div class="fb-q">Anything you'd want to tell us? <span class="opt">(optional)</span></div>
+      <textarea class="fb-ta" id="fbComment" placeholder="What stood out, what's missing…"></textarea>
+      <div class="fb-q">Email <span class="opt">(optional, for follow-up)</span></div>
+      <input class="fb-in" id="fbEmail" type="email" placeholder="you@firm.com">
+      <div class="fb-mini" id="fbMini"></div>
+      <div class="modal-foot"><button class="cancel" id="fbCancel">Cancel</button><button class="import" id="fbSubmit">Submit</button></div>
+    </div>
+    <div id="fbThanks" style="display:none">
+      <div class="fb-thanks"><div class="fb-ok">✓</div><div class="big">Thank you</div><div class="help">Your feedback was recorded.</div></div>
+      <div class="modal-foot"><button class="cancel" id="fbAnother">Submit another</button><button class="import" id="fbDone">Done</button></div>
+    </div>
+  </div>
+</div>
+
+<svg style="display:none"><defs>
+  <g id="g-image"><path d="M21 15L16 10L5 21M3 3H21L21 21H3C3 15 3 9 3 3ZM10 8.5C10 9.33 9.33 10 8.5 10C7.67 10 7 9.33 7 8.5C7 7.67 7.67 7 8.5 7C9.33 7 10 7.67 10 8.5Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="g-grid"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="g-sliders"><path d="M4 8h9M19 8h1M4 16h1M11 16h9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="16" cy="8" r="2.3" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="16" r="2.3" fill="none" stroke="currentColor" stroke-width="1.5"/></g>
+  <g id="g-chaos"><path d="M0 40H40V0H0V40Z" fill="#E1161C"/><path d="M22.7604 27.8797C22.2804 27.8797 18.3604 27.7597 16.0404 24.5997C14.8404 22.9597 14.6404 21.2397 14.5604 20.3997C14.5604 20.3197 14.5604 19.9597 14.8404 19.6397C15.1204 19.3197 15.5204 19.2797 15.6004 19.2797H16.6804C17.5604 19.2797 18.4004 19.8397 18.6804 20.6797C19.2404 22.3597 20.8404 23.5997 22.7604 23.5997H32.6404C32.9604 22.4397 33.1204 21.2797 33.1204 20.0397C33.1204 12.6397 27.1204 6.67969 19.7604 6.67969C12.4004 6.67969 11.6004 8.71969 9.16039 11.8797H16.8404C17.3204 11.8797 21.2404 11.9997 23.5604 15.1597C24.7604 16.7997 24.9604 18.5197 25.0404 19.3597C25.0404 19.4397 25.0404 19.7997 24.7604 20.1197C24.4804 20.4397 24.0804 20.4797 24.0004 20.4797H22.9204C22.0404 20.4797 21.2004 19.9197 20.9204 19.0797C20.3604 17.3997 18.7604 16.1597 16.8404 16.1597H6.96039C6.60039 17.3997 6.40039 18.6797 6.40039 19.9997C6.40039 27.3997 12.4004 33.3597 19.7604 33.3597C27.1204 33.3597 28.1204 31.1997 30.5604 27.8397H22.7604V27.8797Z" fill="white"/></g>
+  <g id="g-lock"><rect x="5" y="10.5" width="14" height="9.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.6"/></g>
+  <g id="g-eye"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/></g>
+  <g id="g-eyeoff"><path d="M3 3l18 18M10.6 5.2A8.8 8.8 0 0 1 12 5c6.4 0 10 7 10 7a16 16 0 0 1-2.9 3.6M6.5 6.9A16 16 0 0 0 2 12s3.6 7 10 7a8.8 8.8 0 0 0 3.8-.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
+  <g id="g-doc"><path d="M6 2.5h7l5 5v14H6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M13 2.5V7.5h5M9 12.5h6M9 16h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
+  <g id="g-bubble"><path d="M4 5.5h16v10.5H9.5L5 20v-3.5H4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></g>
+  <g id="g-refresh"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4.5V8h-3.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="g-cosmos"><path d="M40 0H0V40H40V0Z" fill="#714AB5"/><path d="M20.0003 6.6665C12.6337 6.6665 6.66699 12.6332 6.66699 19.9998C6.66699 26.9332 11.967 32.6332 18.7337 33.2665C18.7003 32.9832 18.6837 32.6832 18.6837 32.3998C18.6837 28.1998 22.0837 24.7998 26.2837 24.7998C28.2837 24.7998 30.1003 25.5665 31.4503 26.8332C32.6503 24.8332 33.3337 22.4998 33.3337 20.0165C33.3337 12.6332 27.367 6.6665 20.0003 6.6665ZM15.3003 23.8998C12.8503 23.8998 10.8503 21.9165 10.8503 19.4498C10.8503 16.9832 12.8337 14.9998 15.3003 14.9998C17.7503 14.9998 19.7503 16.9832 19.7503 19.4498C19.7503 21.9165 17.7503 23.8998 15.3003 23.8998ZM22.4003 14.0498C21.117 14.0498 20.0837 13.0165 20.0837 11.7332C20.0837 10.4498 21.117 9.4165 22.4003 9.4165C23.6837 9.4165 24.717 10.4498 24.717 11.7332C24.7003 13.0165 23.667 14.0498 22.4003 14.0498Z" fill="white"/></g>
+</defs></svg>
+
+<script>
+/* ============================================================================
+   ENGINE — compute core reused verbatim from SmartMatBrick.html (the real engine)
+   ============================================================================ */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hash2(x,y){let h=(Math.imul(x|0,374761393)+Math.imul(y|0,668265263))|0;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967296;}
+const JSHADOW={flush:0.05,concave:0.20,raked:0.34,weathered:0.26,vee:0.22,struck:0.24,beaded:0.16};/* joint shadow by tooling (standard depth) */
+function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
+function lerp(a,b,t){return a+(b-a)*t}
+function v3(x,y,z){return{x,y,z}}
+function v3add(a,b){return v3(a.x+b.x,a.y+b.y,a.z+b.z)}
+function v3sub(a,b){return v3(a.x-b.x,a.y-b.y,a.z-b.z)}
+function v3scale(a,s){return v3(a.x*s,a.y*s,a.z*s)}
+function v3dot(a,b){return a.x*b.x+a.y*b.y+a.z*b.z}
+function v3cross(a,b){return v3(a.y*b.z-a.z*b.y,a.z*b.x-a.x*b.z,a.x*b.y-a.y*b.x)}
+function v3len(a){return Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z)}
+function v3norm(a){const l=v3len(a);return l>1e-8?v3scale(a,1/l):v3(0,0,1)}
+function inchStr(i){const ft=Math.floor(i/12),r=i-ft*12,w=Math.floor(r),f=r-w;const fs=[[.125,'⅛'],[.25,'¼'],[.375,'⅜'],[.5,'½'],[.625,'⅝'],[.75,'¾'],[.875,'⅞']];let s='';for(const[v,c]of fs)if(Math.abs(f-v)<.01){s=c;break};if(ft>0)return`${ft}' ${w}${s}"`;return`${w}${s}"`}
+function ftStr(f){return inchStr(f*12)}
+function hexRgb(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]}
+function rgbHex(r){return'#'+r.map(c=>clamp(Math.round(c),0,255).toString(16).padStart(2,'0')).join('')}
+function rgbHsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h,s,l=(mx+mn)/2;if(mx===mn){h=s=0}else{const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);switch(mx){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;case b:h=((r-g)/d+4)/6;break}}return[h*360,s*100,l*100]}
+function hslRgb(h,s,l){h/=360;s/=100;l/=100;let r,g,b;if(s===0){r=g=b=l}else{const q=l<.5?l*(1+s):l+s-l*s,p=2*l-q;const f=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p};r=f(p,q,h+1/3);g=f(p,q,h);b=f(p,q,h-1/3)}return[r*255,g*255,b*255]}
+
+const ST={anchors:[],selAnc:0,view:'lit',meshes:null,wallW:0,wallH:0,jW:0,jD:0,jProfile:'concave',layout:null,params:null,seed:42,isPreview:true};
+let nxId=1;
+const PREVIEW_SIZE=120;
+function initAnchors(){ST.anchors=[
+  {id:nxId++,name:'D20',color:[172,116,82],weight:15,variation:16,active:true,locked:false},
+  {id:nxId++,name:'D29',color:[96,94,96],weight:10,variation:14,active:true,locked:false},
+  {id:nxId++,name:'D190',color:[190,178,160],weight:10,variation:14,active:true,locked:false},
+  {id:nxId++,name:'D23',color:[160,74,57],weight:65,variation:12,active:true,locked:false},
+];}
+
+function createBrickMesh(ox,oy,oz,bw,bh,bd,rng,params,jW,coarse){
+  const{matVar,bow,twist,warp,constrain}=params;const subX=coarse?2:8,subY=coarse?2:5;const verts=[],faces=[];
+  const inset=0;ox+=inset;oy+=inset;bw=Math.max(0.1,bw-inset*2);bh=Math.max(0.1,bh-inset*2);/* brick fills its cell; the jW layout gap is the joint */
+  if(matVar>0){const posJit=jW*0.25*matVar;ox+=(rng()-0.5)*2*posJit;oy+=(rng()-0.5)*2*posJit;}
+  const taperX=(rng()-0.5)*2*matVar*0.06;const taperY=(rng()-0.5)*2*matVar*0.04;
+  const bowSign=(rng()-0.5)>0?1:-1;const bowMag=bow*(0.4+rng()*0.6)*bd*0.12;const bowVal=bowSign*bowMag;
+  const twistAngle=twist*(rng()-0.5)*2*0.035;
+  const warpEdges=[];
+  if(warp>0){for(let e=0;e<4;e++){const harmonics=[];const nH=2+Math.floor(rng()*2);for(let h=0;h<nH;h++){harmonics.push({freq:(1+h)*(0.8+rng()*0.4),phase:rng()*Math.PI*2,amp:warp*bw*0.008*(1/(1+h))*(0.5+rng())});}warpEdges.push(harmonics);}}
+  const surfRough=matVar*bd*0.008;
+  const cx=ox+bw/2,cy=oy+bh/2,cz=oz+bd/2;
+  function sampleEdgeWarp(edgeIdx,t){if(warp<=0||!warpEdges[edgeIdx])return 0;let d=0;for(const h of warpEdges[edgeIdx]){d+=h.amp*Math.sin(t*Math.PI*h.freq+h.phase);}return d;}
+  function makeGrid(zVal,flipNormal){
+    const isFront=zVal>0;const grid=[];
+    for(let iy=0;iy<=subY;iy++){const row=[];for(let ix=0;ix<=subX;ix++){
+      const u=ix/subX,v=iy/subY;
+      const wScale=1+taperX*(1-2*u);const hScale=1+taperY*(1-2*v);const localW=bw*wScale,localH=bh*hScale;
+      let x=ox+(bw-localW)/2+u*localW;let y=oy+(bh-localH)/2+v*localH;let z=oz+zVal;
+      if(warp>0){const dTop=v,dBot=1-v,dLeft=u,dRight=1-u;const fade=(d)=>{const t=clamp(d*3,0,1);return(1-t)*(1-t)*(1-t)};
+        y+=sampleEdgeWarp(0,u)*fade(dTop);y-=sampleEdgeWarp(1,u)*fade(dBot);x+=sampleEdgeWarp(2,v)*fade(dLeft);x-=sampleEdgeWarp(3,v)*fade(dRight);}
+      if(isFront&&bowVal!==0){const bu=(u-0.5)*2,bv=(v-0.5)*2;z+=bowVal*(1-bu*bu)*(1-bv*bv);}
+      if(twistAngle!==0){const angle=twistAngle*(u-0.5);const dy=y-cy,dz=z-cz;const cos=Math.cos(angle),sin=Math.sin(angle);y=cy+dy*cos-dz*sin;z=cz+dy*sin+dz*cos;}
+      if(isFront&&surfRough>0){z+=(rng()-0.5)*2*surfRough;}
+      verts.push(v3(x,y,z));row.push(verts.length-1);
+    }grid.push(row);}
+    if(constrain&&warp>0&&isFront){conserveEdge(verts,grid[0],bw);conserveEdge(verts,grid[subY],bw);conserveEdge(verts,grid.map(r=>r[0]),bh);conserveEdge(verts,grid.map(r=>r[subX]),bh);}
+    for(let iy=0;iy<subY;iy++){for(let ix=0;ix<subX;ix++){const a=grid[iy][ix],b=grid[iy][ix+1],c=grid[iy+1][ix+1],d=grid[iy+1][ix];if(flipNormal){faces.push([a,d,c]);faces.push([a,c,b]);}else{faces.push([a,b,c]);faces.push([a,c,d]);}}}
+    return grid;
+  }
+  const fg=makeGrid(bd,false),bg=makeGrid(0,true);
+  for(let ix=0;ix<subX;ix++){const fl=fg[0][ix],fr=fg[0][ix+1],bl=bg[0][ix],br=bg[0][ix+1];faces.push([fl,fr,br]);faces.push([fl,br,bl]);}
+  for(let ix=0;ix<subX;ix++){const fl=fg[subY][ix],fr=fg[subY][ix+1],bl=bg[subY][ix],br=bg[subY][ix+1];faces.push([fl,bl,br]);faces.push([fl,br,fr]);}
+  for(let iy=0;iy<subY;iy++){const ft=fg[iy][0],fb=fg[iy+1][0],bt=bg[iy][0],bb=bg[iy+1][0];faces.push([ft,bt,bb]);faces.push([ft,bb,fb]);}
+  for(let iy=0;iy<subY;iy++){const ft=fg[iy][subX],fb=fg[iy+1][subX],bt=bg[iy][subX],bb=bg[iy+1][subX];faces.push([ft,fb,bb]);faces.push([ft,bb,bt]);}
+  return{verts,faces,bounds:{x:ox,y:oy,z:oz,w:bw,h:bh,d:bd}};
+}
+function conserveEdge(verts,indices,nomLen){
+  if(indices.length<3)return;const pts=indices.map(i=>({...verts[i]}));let arcLen=0;for(let i=1;i<pts.length;i++)arcLen+=v3len(v3sub(pts[i],pts[i-1]));
+  if(arcLen<0.01||nomLen<0.01)return;const straight=[];for(let i=0;i<pts.length;i++){const t=i/(pts.length-1);straight.push(v3(lerp(pts[0].x,pts[pts.length-1].x,t),lerp(pts[0].y,pts[pts.length-1].y,t),lerp(pts[0].z,pts[pts.length-1].z,t)))}
+  const off=pts.map((p,i)=>v3sub(p,straight[i]));let lo=0,hi=2;
+  for(let it=0;it<12;it++){const mid=(lo+hi)/2;let tl=0,prev=v3add(straight[0],v3scale(off[0],mid));for(let i=1;i<pts.length;i++){const cur=v3add(straight[i],v3scale(off[i],mid));tl+=v3len(v3sub(cur,prev));prev=cur}if(tl>nomLen)hi=mid;else lo=mid}
+  const s=(lo+hi)/2;for(let i=1;i<indices.length-1;i++){verts[indices[i]]=v3add(straight[i],v3scale(off[i],s))}
+}
+function getCourseTemplate(bond,eL,eH,eD,jW){
+  const hW=eD,sS=eL+jW,hS=hW+jW;
+  switch(bond){
+    case'running_half':return ci=>({off:(ci%2===1)?sS/2:0,units:[{t:'s',w:eL}],step:sS});
+    case'running_third':return ci=>({off:(ci%3)*sS/3,units:[{t:'s',w:eL}],step:sS});
+    case'stack':return ci=>({off:0,units:[{t:'s',w:eL}],step:sS});
+    case'flemish':return ci=>({off:(ci%2===1)?(sS+hS)/2:0,units:[{t:'s',w:eL},{t:'h',w:hW}],step:sS+hS});
+    case'english':return ci=>ci%2===0?{off:0,units:[{t:'s',w:eL}],step:sS}:{off:hS/2,units:[{t:'h',w:hW}],step:hS};
+    case'common':return ci=>ci%6===5?{off:hS/2*(Math.floor(ci/6)%2),units:[{t:'h',w:hW}],step:hS}:{off:(ci%2===1)?sS/2:0,units:[{t:'s',w:eL}],step:sS};
+    case'header':return ci=>({off:(ci%2===1)?hS/2:0,units:[{t:'h',w:hW}],step:hS});
+    default:return ci=>({off:(ci%2===1)?sS/2:0,units:[{t:'s',w:eL}],step:sS});
+  }
+}
+function layoutBricks(wallW,wallH,eL,eH,eD,jW,bond,cropX,cropY,cropW,cropH){
+  const cH=eH+jW;const fn=getCourseTemplate(bond,eL,eH,eD,jW);const bricks=[];const nC=Math.ceil(wallH/cH);
+  const hasCrop=cropW!==undefined;const cxMin=hasCrop?cropX:0,cyMin=hasCrop?cropY:0,cxMax=hasCrop?cropX+cropW:wallW,cyMax=hasCrop?cropY+cropH:wallH;
+  for(let ci=0;ci<nC;ci++){const y=ci*cH;const h=Math.min(eH,wallH-y);if(h<0.05)break;if(y+h<cyMin||y>cyMax)continue;
+    const{off,units,step}=fn(ci);let x=0;while(x-off>-step)x-=step;x-=off;let ui=0,col=0;
+    while(x<wallW){const u=units[ui%units.length];const vx=Math.max(0,x),vr=Math.min(wallW,x+u.w),vw=vr-vx;
+      if(vw>0.05){if(!hasCrop||(vr>cxMin&&vx<cxMax&&y+h>cyMin&&y<cyMax)){bricks.push({x:vx,y,w:vw,h,nomW:u.w,type:u.t,ci,col,depth:u.t==='h'?eL:eD,faceW:vw,faceH:h});}}
+      x+=u.w+jW;ui++;col++;}}
+  return bricks;
+}
+function readParams(){return{
+  wallW_ft:40,wallH_ft:40,scale:parseFloat(g('sc').value),
+  eL:parseFloat(g('eL').value),eH:parseFloat(g('eH').value),eD:parseFloat(g('eD').value),jW:parseFloat(g('jW').value),jD:parseFloat(g('jD').value),
+  jProfile:g('jProfile').value,bond:g('bond').value,seed:parseInt(g('sd').value),
+  matVar:parseInt(g('mV').value)/100,bow:parseInt(g('bow').value)/100,twist:parseInt(g('twist').value)/100,warp:parseInt(g('warp').value)/100,constrain:g('conP').checked,
+  spotVar:parseInt(g('spot').value),surfNoise:parseInt(g('noise').value),dirt:parseInt(g('dirt').value),eff:parseInt(g('eff').value),jointColor:g('jCol').value,
+};}
+function generateScene(preview){
+  const p=readParams();const cH=p.eH+p.jW;const fullEdge=Math.round(240/cH)*cH;/* ~20' square, snapped to whole courses */const wallW=fullEdge,wallH=fullEdge;
+  let renderW,renderH,cropX=0,cropY=0;
+  if(preview){const edge=10*cH;renderW=Math.min(edge,wallW);renderH=Math.min(edge,wallH);cropX=Math.max(0,(wallW-renderW)/2);
+    let cy=(wallH-renderH)/2;const k=Math.max(1,Math.round((cy+p.jW/2)/cH));cropY=clamp(k*cH-p.jW/2,0,Math.max(0,wallH-renderH));/* start/end at a bed-joint mid-point */
+  }else{renderW=wallW;renderH=wallH;}
+  const layout=preview?layoutBricks(wallW,wallH,p.eL,p.eH,p.eD,p.jW,p.bond,cropX,cropY,renderW,renderH):layoutBricks(wallW,wallH,p.eL,p.eH,p.eD,p.jW,p.bond);
+  const meshParams={matVar:p.matVar,bow:p.bow,twist:p.twist,warp:p.warp,constrain:p.constrain};
+  const meshes=[];const active=ST.anchors.filter(a=>a.active);const totalW=active.reduce((s,a)=>s+a.weight,0);
+  for(const brick of layout){const bSeed=p.seed*10000+brick.ci*1000+brick.col;const rng=mulberry32(bSeed);
+    let r=rng()*totalW,picked=active[0]||{color:[180,140,110],variation:10,id:0};for(const a of active){r-=a.weight;if(r<=0){picked=a;break;}}
+    const mesh=createBrickMesh(brick.x,brick.y,0,brick.faceW,brick.faceH,brick.depth,rng,meshParams,p.jW,!preview);
+    const hsl=rgbHsl(...picked.color);const v=picked.variation;
+    const col=hslRgb(hsl[0]+(rng()-0.5)*v*1.5,clamp(hsl[1]+(rng()-0.5)*v,0,100),clamp(hsl[2]+(rng()-0.5)*v+(rng()-0.5)*p.spotVar*0.4,5,95));
+    const vrng=mulberry32((p.seed*7919+brick.ci*131+brick.col*17)>>>0);const flashDark=vrng()<0.6;
+    const col2=flashDark?hslRgb(hsl[0]+(vrng()-0.5)*16,clamp(hsl[1]*0.5,0,100),clamp(hsl[2]-(16+vrng()*18),3,96)):hslRgb(hsl[0]+8+(vrng()-0.5)*12,clamp(hsl[1]+8,0,100),clamp(hsl[2]+(8+vrng()*10),5,97));
+    const vgDir=vrng()*6.283,vgPh=vrng()*6.283,core=vrng()<0.28?(0.12+vrng()*0.22):0;
+    meshes.push({...mesh,color:col,col2,vgDir,vgPh,core,anchorId:picked.id,brick});}
+  ST.meshes=meshes;ST.wallW=renderW;ST.wallH=renderH;ST.cropX=cropX;ST.cropY=cropY;ST.fullWallW=wallW;ST.fullWallH=wallH;ST.jW=p.jW;ST.jD=p.jD;ST.jProfile=p.jProfile;ST.coursePitchIn=p.eH+p.jW;ST.layout=layout;ST.params=meshParams;ST.seed=p.seed;ST.isPreview=preview;
+}
+function rasterize(view){
+  const wallW=ST.wallW,wallH=ST.wallH;const maxPx=2600;const TARGET=(ST.isPreview?360:640)*SS;let effS=Math.min(TARGET/Math.max(wallW,wallH),maxPx/Math.max(wallW,wallH));
+  const _pitch=ST.coursePitchIn||2.625;if(_pitch>0)effS=Math.max(1,Math.round(_pitch*effS))/_pitch;/* render to a target resolution (crisp), course pitch on whole pixels */
+  const W=Math.round(wallW*effS),H=Math.round(wallH*effS);const offX=ST.cropX||0,offY=ST.cropY||0;
+  const canvas=g('main');canvas.width=W;canvas.height=H;const ctx=canvas.getContext('2d');const imgData=ctx.createImageData(W,H);const pixels=imgData.data;const zBuf=new Float32Array(W*H).fill(-Infinity);
+  const azRad=parseFloat(g('az').value)*Math.PI/180,elRad=parseFloat(g('el').value)*Math.PI/180;
+  const lightDir=v3norm(v3(-Math.cos(elRad)*Math.sin(azRad),-Math.cos(elRad)*Math.cos(azRad),Math.sin(elRad)));const ambient=parseFloat(g('amb').value);
+  const jRgb=hexRgb(g('jCol').value);const jD=ST.jD;const noise=parseInt(g('noise').value);const dirt=parseInt(g('dirt').value)/100;const JS=JSHADOW[ST.jProfile]||0.20;const cHr=ST.coursePitchIn||2.625;const jWr=ST.jW||0.375;const eHr=cHr-jWr;
+  const mortarZ=-jD;
+  for(let py=0;py<H;py++){for(let px=0;px<W;px++){const idx=(py*W+px)*4;zBuf[py*W+px]=mortarZ;
+    if(view==='lit'){const n=(hash2(px,py)-0.5)*18;pixels[idx]=clamp(jRgb[0]+n,0,255);pixels[idx+1]=clamp(jRgb[1]+n,0,255);pixels[idx+2]=clamp(jRgb[2]+n,0,255);pixels[idx+3]=255}
+    else if(view==='normal'){pixels[idx]=128;pixels[idx+1]=128;pixels[idx+2]=255;pixels[idx+3]=255}
+    else if(view==='depth'){const d=clamp((-mortarZ/5)*255,0,255);pixels[idx]=d;pixels[idx+1]=d;pixels[idx+2]=d;pixels[idx+3]=255}
+    else if(view==='ao'){pixels[idx]=140;pixels[idx+1]=140;pixels[idx+2]=140;pixels[idx+3]=255}
+    else{pixels[idx]=30;pixels[idx+1]=30;pixels[idx+2]=28;pixels[idx+3]=255}}}
+  for(const mesh of ST.meshes){const{verts,faces,color,brick,col2,vgDir,vgPh,core}=mesh;
+    const _bx=(brick.x-offX)*effS,_by=(brick.y-offY)*effS,_bw=Math.max(1,brick.faceW*effS),_bh=Math.max(1,brick.faceH*effS);
+    const _c2r=col2?col2[0]:color[0],_c2g=col2?col2[1]:color[1],_c2b=col2?col2[2]:color[2],_vc=Math.cos(vgDir||0),_vs=Math.sin(vgDir||0),_vph=vgPh||0,_core=core||0;
+    for(const face of faces){const v0=verts[face[0]],v1=verts[face[1]],v2=verts[face[2]];const e1=v3sub(v1,v0),e2=v3sub(v2,v0);const fn=v3norm(v3cross(e1,e2));if(fn.z<0.01)continue;
+      const sx0=(v0.x-offX)*effS,sy0=(v0.y-offY)*effS,sz0=v0.z,sx1=(v1.x-offX)*effS,sy1=(v1.y-offY)*effS,sz1=v1.z,sx2=(v2.x-offX)*effS,sy2=(v2.y-offY)*effS,sz2=v2.z;
+      const minX=Math.max(0,Math.floor(Math.min(sx0,sx1,sx2))),maxX=Math.min(W-1,Math.ceil(Math.max(sx0,sx1,sx2))),minY=Math.max(0,Math.floor(Math.min(sy0,sy1,sy2))),maxY=Math.min(H-1,Math.ceil(Math.max(sy0,sy1,sy2)));
+      if(maxX<minX||maxY<minY)continue;const dx01=sx1-sx0,dy01=sy1-sy0,dx02=sx2-sx0,dy02=sy2-sy0;const det=dx01*dy02-dx02*dy01;if(Math.abs(det)<0.001)continue;const invDet=1/det;
+      const ndotl=v3dot(fn,lightDir);const shade=ambient+(1-ambient)*Math.max(0,ndotl);
+      for(let py=minY;py<=maxY;py++){for(let px=minX;px<=maxX;px++){const dpx=px+0.5-sx0,dpy=py+0.5-sy0;const u=(dpx*dy02-dpy*dx02)*invDet;const vv=(dx01*dpy-dy01*dpx)*invDet;const w=1-u-vv;
+        if(u>=-0.001&&vv>=-0.001&&w>=-0.001){const z=sz0*w+sz1*u+sz2*vv;const bufIdx=py*W+px;
+          if(z>zBuf[bufIdx]){zBuf[bufIdx]=z;const idx=bufIdx*4;
+            if(view==='lit'){const fx=(px-_bx)/_bw,fy=(py-_by)/_bh;
+              const proj=fx*_vc+fy*_vs;let mix=0.5+0.5*Math.sin(proj*5.5+_vph)*Math.cos(fy*3.3-fx*1.7+_vph*1.6);const eb=1-clamp(Math.min(fx,1-fx,fy,1-fy)*3,0,1);mix=clamp(mix*0.6+eb*0.45,0,1);
+              let br=color[0]+(_c2r-color[0])*mix,bgc=color[1]+(_c2g-color[1])*mix,bbc=color[2]+(_c2b-color[2])*mix;
+              if(_core>0){const dc=1-clamp((Math.abs(fx-0.5)+Math.abs(fy-0.5))*2.2,0,1);const kk=1-_core*dc;br*=kk;bgc*=kk;bbc*=kk;}
+              const ep=clamp(Math.min(fx,1-fx,fy,1-fy)*7,0,1);const edgeShade=1-JS*0.45*(1-ep);const grad=1.08-0.16*clamp(fy,0,1);const grain=0.92+0.16*hash2(px,py);const pk=hash2(px>>1,py>>1);const pock=pk<0.085?(0.74+pk*2.2):1;
+              let f=shade*edgeShade*grad*grain*pock;let cr=br*f,cg=bgc*f,cb=bbc*f;if(dirt>0){const da=dirt*0.22*clamp(fy,0,1);cr*=(1-da);cg*=(1-da);cb*=(1-da*0.8)}
+              pixels[idx]=clamp(cr,0,255);pixels[idx+1]=clamp(cg,0,255);pixels[idx+2]=clamp(cb,0,255);}
+            else if(view==='normal'){pixels[idx]=clamp((fn.x*0.5+0.5)*255,0,255);pixels[idx+1]=clamp((fn.y*0.5+0.5)*255,0,255);pixels[idx+2]=clamp((fn.z*0.5+0.5)*255,0,255);}
+            else if(view==='depth'){const d=clamp((1-z/6)*180,0,255);pixels[idx]=d;pixels[idx+1]=d;pixels[idx+2]=d;}
+            else if(view==='ao'){const bx=(brick.x-offX)*effS,by=(brick.y-offY)*effS,bw=brick.faceW*effS,bh=brick.faceH*effS;const ex=Math.min((px-bx)/bw,1-(px-bx)/bw)*2,ey=Math.min((py-by)/bh,1-(py-by)/bh)*2;const ao=0.6+0.4*Math.sqrt(clamp(Math.min(ex,ey),0,1));const val=clamp(ao*255,0,255);pixels[idx]=val;pixels[idx+1]=val;pixels[idx+2]=val;}
+            else{pixels[idx]=clamp(color[0]*0.3,0,255);pixels[idx+1]=clamp(color[1]*0.3,0,255);pixels[idx+2]=clamp(color[2]*0.3,0,255);}
+            pixels[idx+3]=255;}}}}
+    }}
+  if(view==='lit'&&JS>0.02){const ll=Math.hypot(lightDir.x,lightDir.y)||1;const ux=lightDir.x/ll,uy=lightDir.y/ll;const N=Math.max(3,Math.round(jWr*effS*1.3));
+    for(let py=0;py<H;py++){for(let px=0;px<W;px++){const i=py*W+px;if(zBuf[i]<=mortarZ+0.001){let occ=0;for(let s=1;s<=N;s++){const sx=px+Math.round(ux*s),sy=py+Math.round(uy*s);if(sx<0||sy<0||sx>=W||sy>=H)break;if(zBuf[sy*W+sx]>mortarZ+0.05){occ=1-(s-1)/N;break;}}if(occ>0){const d=1-JS*1.5*occ;const ix=i*4;pixels[ix]*=d;pixels[ix+1]*=d;pixels[ix+2]*=d;}}}}}
+  ctx.putImageData(imgData,0,0);
+  if(view==='lit'&&noise>0){const nRng=mulberry32(ST.seed+999);for(let i=0;i<W*H/60;i++){const nx=nRng()*W,ny=nRng()*H,nv=(nRng()-0.5)*noise*1.5;ctx.fillStyle=`rgba(${nv>0?255:0},${nv>0?255:0},${nv>0?255:0},${Math.abs(nv)/255*0.25})`;ctx.fillRect(nx,ny,1+nRng()*2,1+nRng()*2);}}
+  const badge=g('modeBadge');badge.textContent=ST.isPreview?'Detail · 10 courses':"Full wall · ~"+Math.round(ST.fullWallW/12)+"' square";
+  const mc=ST.meshes.length;g('pInfo').textContent=`${mc} elements · seed ${ST.seed} · ${view}`;
+  g('sts').textContent=`${W}×${H}px · ${ST.meshes.reduce((s,m)=>s+m.faces.length,0).toLocaleString()} tris`;
+}
+
+/* ============================================================================
+   UI WIRING (fresh — the Cosmos 3-tier workspace)
+   ============================================================================ */
+function g(id){return document.getElementById(id);}
+const BONDS=[['running_half','Running ½'],['running_third','Running ⅓'],['stack','Stack'],['flemish','Flemish'],['english','English'],['common','Common'],['header','Header']];
+const SIZES={modular:{eL:7.625,eH:2.25,eD:3.625},roman:{eL:11.625,eH:1.625,eD:3.625},norman:{eL:11.625,eH:2.25,eD:3.625},utility:{eL:11.625,eH:3.625,eD:3.625}};
+const THEMES={
+  pristine:{mV:0,bow:0,twist:0,warp:0,spot:8,noise:3,dirt:0,eff:0},
+  weathered:{mV:35,bow:20,twist:15,warp:30,spot:18,noise:8,dirt:45,eff:25},
+  reclaimed:{mV:60,bow:35,twist:30,warp:55,spot:28,noise:14,dirt:65,eff:40},
+};
+let SS=3; const SS_HI=3; let detailMode=true; let rafPending=false, idleTimer=null;
+function draw(){ generateScene(detailMode); rasterize(ST.view); }
+/* fast low-res render while interacting; sharpen (supersample + browser downscale) once idle */
+function preview(){ if(!rafPending){ rafPending=true; requestAnimationFrame(()=>{ rafPending=false; SS=1; draw(); }); } clearTimeout(idleTimer); idleTimer=setTimeout(()=>{ SS=SS_HI; draw(); },170); }
+
+// icons + logo
+const IMAP={'i-image':'g-image','i-grid':'g-grid','i-sliders':'g-sliders'};
+document.querySelectorAll('svg[class]').forEach(svg=>{for(const c of svg.classList){if(IMAP[c]){svg.setAttribute('viewBox','0 0 24 24');svg.innerHTML='<use href="#'+IMAP[c]+'"/>';break;}}});
+document.querySelectorAll('svg.chaos').forEach(svg=>{svg.setAttribute('viewBox','0 0 40 40');svg.innerHTML='<use href="#g-cosmos"/>';});
+
+// value displays
+const FMT={wW:v=>ftStr(+v),wH:v=>ftStr(+v),eL:v=>inchStr(+v),eH:v=>inchStr(+v),eD:v=>inchStr(+v),jW:v=>inchStr(+v),jD:v=>inchStr(+v),sd:v=>v,mV:v=>v,bow:v=>v,twist:v=>v,warp:v=>v,spot:v=>v,noise:v=>v,dirt:v=>v,eff:v=>v,az:v=>v+'°',el:v=>v+'°',amb:v=>v};
+function refreshDisplays(){for(const id in FMT){const el=g(id),ve=g('v_'+id);if(el&&ve)ve.textContent=FMT[id](el.value);}}
+
+// accordion: any [data-acc] header toggles .open on its parent .acc / .adv
+document.querySelectorAll('[data-acc]').forEach(h=>h.addEventListener('click',e=>{ if(e.target.closest('input,select,button,.bondgrid,.themes,#aList,.addA'))return; h.parentElement.classList.toggle('open'); }));
+
+// disclosure mode
+function setMode(mode){
+  document.querySelectorAll('.tier').forEach(t=>t.classList.add('open'));
+  document.querySelectorAll('.sub').forEach(s=>{ if(s.classList.contains('hero')) s.classList.toggle('open',mode==='asym'); else s.classList.remove('open'); });
+}
+
+// bond grid
+const bondSel=g('bond');BONDS.forEach(([id,label])=>{const o=document.createElement('option');o.value=id;o.textContent=label;bondSel.appendChild(o);});
+const bg=g('bondGrid');BONDS.forEach(([id,label])=>{const b=document.createElement('button');b.className='bond'+(id==='running_half'?' on':'');b.textContent=label;b.dataset.id=id;
+  b.onclick=()=>{bondSel.value=id;[...bg.children].forEach(c=>c.classList.toggle('on',c.dataset.id===id));g('sumBond').textContent=label;g('sum2').textContent=label;preview();};bg.appendChild(b);});
+
+// size preset
+g('sizePreset').onchange=function(){const s=SIZES[this.value];if(s){g('eL').value=s.eL;g('eH').value=s.eH;g('eD').value=s.eD;refreshDisplays();}g('customDims').style.display=(this.value==='custom')?'block':'none';g('sumSize').textContent=this.options[this.selectedIndex].text.split(' (')[0];preview();};
+// dimensions moving -> custom
+['eL','eH','eD'].forEach(id=>g(id).addEventListener('input',()=>{g('sizePreset').value='custom';g('customDims').style.display='block';g('sumSize').textContent='Custom';}));
+
+// themes
+document.querySelectorAll('.theme').forEach(t=>t.onclick=()=>{const th=THEMES[t.dataset.th];document.querySelectorAll('.theme').forEach(x=>x.classList.remove('on'));t.classList.add('on');
+  for(const k in th){g(k).value=th[k];}refreshDisplays();const nm=t.textContent;g('sumTheme').textContent=nm;g('sum3').textContent=nm;preview();});
+
+// joint profile + grout
+g('jProfile').addEventListener('change',preview);
+function updateMortar(){const e=g('sumMortar');if(e)e.textContent=mortarName;}
+g('jCol').addEventListener('input',()=>{updateMortar();buildMortar();preview();});
+
+// all sliders: live preview + display
+document.querySelectorAll('input[type=range]').forEach(r=>r.addEventListener('input',()=>{refreshDisplays();preview();}));
+g('conP').addEventListener('change',preview);
+
+// anchors (representative samples: thumbnail · distribution slider · lock · eye)
+let ancRefs=[];
+function drawSwatch(cv,a){
+  const ctx=cv.getContext('2d'),W=cv.width,H=cv.height;ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#b8ada0';ctx.fillRect(0,0,W,H); // mortar surround
+  const m=Math.round(W*0.10),x=m,y=m,bw=W-2*m,bh=H-2*m;const hsl=rgbHsl(...a.color);
+  const g2=ctx.createLinearGradient(0,y,0,y+bh);
+  g2.addColorStop(0,'rgb('+hslRgb(hsl[0],hsl[1],clamp(hsl[2]+8,0,100)).map(Math.round).join(',')+')');
+  g2.addColorStop(1,'rgb('+hslRgb(hsl[0],hsl[1],clamp(hsl[2]-10,0,100)).map(Math.round).join(',')+')');
+  ctx.fillStyle=g2;ctx.fillRect(x,y,bw,bh);
+  const rng=mulberry32((a.id*2654435761)>>>0),v=a.variation||10;
+  for(let i=0;i<46;i++){const sx=x+rng()*bw,sy=y+rng()*bh,r=1+rng()*3;const c=hslRgb(hsl[0]+(rng()-0.5)*v,clamp(hsl[1]+(rng()-0.5)*v,0,100),clamp(hsl[2]+(rng()-0.5)*v,5,95));ctx.fillStyle='rgba('+c.map(Math.round).join(',')+',0.5)';ctx.beginPath();ctx.arc(sx,sy,r,0,6.283);ctx.fill();}
+  ctx.strokeStyle='rgba(255,255,255,0.35)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x+0.5,y+bh);ctx.lineTo(x+0.5,y+0.5);ctx.lineTo(x+bw,y+0.5);ctx.stroke();
+  ctx.strokeStyle='rgba(0,0,0,0.28)';ctx.beginPath();ctx.moveTo(x+bw-0.5,y);ctx.lineTo(x+bw-0.5,y+bh-0.5);ctx.lineTo(x,y+bh-0.5);ctx.stroke();
+}
+function drawMortarSwatch(cv,color){
+  const ctx=cv.getContext('2d'),W=cv.width,H=cv.height;ctx.clearRect(0,0,W,H);const hsl=rgbHsl(...color);
+  ctx.fillStyle='rgb('+color.map(Math.round).join(',')+')';ctx.fillRect(0,0,W,H);
+  const rng=mulberry32(7);for(let i=0;i<80;i++){const sx=rng()*W,sy=rng()*H,r=0.6+rng()*1.8;const c=hslRgb(hsl[0],clamp(hsl[1]+(rng()-0.5)*6,0,100),clamp(hsl[2]+(rng()-0.5)*10,5,95));ctx.fillStyle='rgba('+c.map(Math.round).join(',')+',0.5)';ctx.beginPath();ctx.arc(sx,sy,r,0,6.283);ctx.fill();}
+}
+function setWeight(i,newVal){
+  const a=ST.anchors[i];if(a.locked||!a.active)return;
+  const others=ST.anchors.filter(x=>x!==a&&x.active&&!x.locked);if(!others.length)return;
+  const lockedSum=ST.anchors.filter(x=>x.active&&x.locked).reduce((s,x)=>s+x.weight,0);
+  newVal=clamp(newVal,0,100-lockedSum);const delta=newVal-a.weight;a.weight=newVal;  // cap at the budget unlocked samples can give up, so the total never exceeds 100 (slider snaps back via syncWeights)
+  let rem=-delta,pool=others.slice(),guard=0;
+  while(Math.abs(rem)>0.01&&pool.length&&guard++<24){const share=rem/pool.length;const next=[];
+    for(const o of pool){const b=o.weight;o.weight=clamp(o.weight+share,0,100);rem-=(o.weight-b);if(o.weight>0&&o.weight<100)next.push(o);}pool=next;}
+}
+function spread(amount,pool){let rem=amount,p=pool.slice(),guard=0;while(Math.abs(rem)>0.01&&p.length&&guard++<24){const sh=rem/p.length;const nx=[];for(const o of p){const b=o.weight;o.weight=clamp(o.weight+sh,0,100);rem-=(o.weight-b);if(o.weight>0&&o.weight<100)nx.push(o);}p=nx;}}
+function activeSum(){return ST.anchors.filter(a=>a.active).reduce((s,a)=>s+a.weight,0);}
+function checkDist(){const sum=activeSum();const off=Math.abs(sum-100)>0.6;const e=g('distErr');if(e){e.style.display=off?'block':'none';if(off)e.textContent='Distribution is '+Math.round(sum)+'%, not 100% — unlock a sample to let it rebalance.';}return !off;}
+function toggleActive(i){const a=ST.anchors[i];
+  if(a.active){a._prior=a.weight;a.active=false;const give=a.weight;a.weight=0;spread(give,ST.anchors.filter(x=>x.active&&!x.locked));}
+  else{a.active=true;const want=(a._prior!=null?a._prior:a.weight);spread(-want,ST.anchors.filter(x=>x!==a&&x.active&&!x.locked));a.weight=want;}
+  buildAnchors();checkDist();preview();
+}
+let mortarName='Standard grey mortar';
+function buildMortar(){const row=g('mortarRow');if(!row)return;row.innerHTML='';
+  const thumb=document.createElement('div');thumb.className='anc-thumb';thumb.title='Change mortar material';
+  const cv=document.createElement('canvas');cv.width=84;cv.height=84;thumb.appendChild(cv);
+  const ov=document.createElement('div');ov.className='thumb-ov';ov.textContent='Change';thumb.appendChild(ov);
+  thumb.onclick=openChangeMortar;
+  const nm=document.createElement('div');nm.className='nm';nm.textContent=mortarName;nm.onclick=openChangeMortar;
+  row.append(thumb,nm);drawMortarSwatch(cv,hexRgb(g('jCol').value));
+}
+function syncWeights(){ST.anchors.forEach((a,i)=>{const r=ancRefs[i];if(r){r.wt.value=Math.round(a.weight);r.pct.textContent=Math.round(a.weight)+'%';}});sumAnchors();checkDist();}
+function buildAnchors(){
+  const list=g('aList');list.innerHTML='';ancRefs=[];
+  ST.anchors.forEach((a,i)=>{
+    const row=document.createElement('div');row.className='anc'+(a.active?'':' off');
+    const thumb=document.createElement('div');thumb.className='anc-thumb';thumb.title='Change material';
+    const cv=document.createElement('canvas');cv.width=84;cv.height=84;thumb.appendChild(cv);thumb.onclick=()=>openChange(i);
+    const main=document.createElement('div');main.className='anc-main';
+    const nm=document.createElement('div');nm.className='anc-name';nm.textContent=a.name;nm.title='Change material';nm.onclick=()=>openChange(i);
+    const srow=document.createElement('div');srow.className='anc-srow';
+    const wt=document.createElement('input');wt.type='range';wt.min=0;wt.max=100;wt.value=Math.round(a.weight);
+    const pct=document.createElement('span');pct.className='anc-pct';pct.textContent=Math.round(a.weight)+'%';
+    wt.oninput=()=>{setWeight(i,+wt.value);syncWeights();preview();};
+    srow.append(wt,pct);main.append(nm,srow);
+    const btns=document.createElement('div');btns.className='anc-btns';
+    const lock=document.createElement('button');lock.className='anc-ic'+(a.locked?' act':'');lock.title=a.locked?'Unlock proportion':'Lock proportion';lock.innerHTML='<svg viewBox="0 0 24 24"><use href="#g-lock"/></svg>';lock.onclick=()=>{a.locked=!a.locked;buildAnchors();checkDist();};
+    const eye=document.createElement('button');eye.className='anc-ic'+(a.active?'':' dim');eye.title=a.active?'Hide from blend':'Show in blend';eye.innerHTML='<svg viewBox="0 0 24 24"><use href="#'+(a.active?'g-eye':'g-eyeoff')+'"/></svg>';eye.onclick=()=>toggleActive(i);
+    btns.append(lock,eye);
+    const ov=document.createElement('div');ov.className='thumb-ov';ov.textContent='Change';thumb.appendChild(ov);
+    row.append(thumb,main,btns);list.appendChild(row);
+    ancRefs[i]={wt,pct};drawSwatch(cv,a);
+  });
+  sumAnchors();
+}
+function sumAnchors(){const act=ST.anchors.filter(a=>a.active);const e=g('sumAnc');if(e)e.textContent=act.length+' samples';g('sum1').textContent=act.length+' samples';}
+g('addA').onclick=()=>{const cols=[[180,90,60],[100,130,90],[90,90,120],[200,180,155]];ST.anchors.push({id:nxId++,name:'Sample '+(ST.anchors.length+1),color:cols[ST.anchors.length%cols.length],weight:10,variation:12,active:true,locked:false});buildAnchors();preview();};
+
+// view tabs
+document.querySelectorAll('.pv-tab').forEach(t=>t.onclick=()=>{ST.view=t.dataset.v;document.querySelectorAll('.pv-tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');rasterize(ST.view);});
+g('viewToggle').onclick=()=>{detailMode=!detailMode;g('viewToggle').textContent=detailMode?'Full Wall':'Detail';SS=SS_HI;draw();};
+
+// (quick-beats board controls removed in the booth composite)
+
+// change material (route a: Cosmos library · b: select from image · c: URL — b/c faked/demo)
+let editingIdx=-1, editingMortar=false, chgPick=null;
+const LIB=[
+  {name:'Terracotta',color:[181,107,69],img:'Brick_terracotta.png'},
+  {name:'Sandy buff',color:[196,155,120],img:'brick_sandy.png'},
+  {name:'Iron-spot',color:[150,70,58],img:'brick_iron_spotted.png'},
+  {name:'Cream limestone',color:[214,200,176],img:'brick_creamy_limestone.png'},
+  {name:'Charcoal',color:[70,68,72],img:'brick_charcoal.png'},
+  {name:'Glazed green',color:[60,120,90],img:'green_glazed_brick.png'},
+];
+const MORTAR_LIB=[
+  {name:'Standard grey mortar',color:[184,173,160]},{name:'Buff mortar',color:[200,188,165]},
+  {name:'White mortar',color:[226,222,214]},{name:'Sand mortar',color:[196,182,150]},
+  {name:'Pewter mortar',color:[140,138,132]},{name:'Charcoal mortar',color:[58,52,47]},
+  {name:'Tan mortar',color:[178,160,130]},{name:'Espresso mortar',color:[74,62,52]},
+];
+const IMG_ALTS=[ /* faked pre-isolated bricks over Brick_Wall.jpg; positions are approximate */
+  {name:'Charcoal',color:[70,68,72],x:'9%',y:'13%',w:'30%',h:'22%'},
+  {name:'Sandy buff',color:[196,155,120],x:'56%',y:'41%',w:'30%',h:'22%'},
+  {name:'Iron-spot',color:[150,70,58],x:'22%',y:'66%',w:'30%',h:'22%'},
+];
+function libData(){return editingMortar?MORTAR_LIB:LIB;}
+function buildLib(filter){const lib=g('lib');lib.innerHTML='';const q=(filter||'').toLowerCase();
+  libData().filter(m=>m.name.toLowerCase().includes(q)).forEach(m=>{const it=document.createElement('div');it.className='lib-it';
+    const sw=m.img?'<img class="sw" src="'+MR+m.img+'" alt="">':'<div class="sw" style="background:rgb('+m.color.join(',')+')"></div>';
+    it.innerHTML=sw+'<div class="nm">'+m.name+'</div>';
+    it.onclick=()=>{chgPick={name:m.name,color:m.color.slice()};[...lib.children].forEach(c=>c.classList.remove('on'));it.classList.add('on');};
+    lib.appendChild(it);});}
+function showMain(){g('chgMain').style.display='';g('chgImage').style.display='none';}
+function openChange(i){editingIdx=i;editingMortar=false;chgPick=null;g('chgTitle').textContent='Change material - '+ST.anchors[i].name;buildLib('');g('libSearch').value='';g('srcUrl').value='';showMain();g('chgModal').classList.add('show');}
+function openChangeMortar(){editingIdx=-1;editingMortar=true;chgPick=null;g('chgTitle').textContent='Change mortar - '+mortarName;buildLib('');g('libSearch').value='';g('srcUrl').value='';showMain();g('chgModal').classList.add('show');}
+g('libSearch').oninput=function(){buildLib(this.value);};
+g('chgClose').onclick=g('chgCancel').onclick=()=>g('chgModal').classList.remove('show');
+g('srcImage').onclick=()=>{const ip=g('imgPick');ip.innerHTML='';ip.style.backgroundImage="url('"+MR+"Brick_Wall.jpg')";ip.style.backgroundSize='cover';ip.style.backgroundPosition='center';IMG_ALTS.forEach(b=>{const h=document.createElement('div');h.className='hot';h.style.left=b.x;h.style.top=b.y;h.style.width=b.w;h.style.height=b.h;h.title=b.name;
+    h.onclick=()=>{chgPick={name:b.name,color:b.color.slice()};[...ip.children].forEach(c=>c.classList.remove('on'));h.classList.add('on');status('Picked '+b.name+' from the source image.');};ip.appendChild(h);});
+  g('chgMain').style.display='none';g('chgImage').style.display='';};
+g('imgBack').onclick=showMain;
+g('srcFetch').onclick=()=>{const u=g('srcUrl').value.trim();if(!u){status('Paste a manufacturer URL first.');return;}chgPick={name:'Petersen Tegl (linked)',color:[150,86,70]};status('URL ingest (faked): factory sample pulled from the link.');};
+g('chgSelect').onclick=()=>{if(!chgPick){g('chgModal').classList.remove('show');return;}
+  if(editingMortar){mortarName=chgPick.name;g('jCol').value=rgbHex(chgPick.color);updateMortar();buildMortar();preview();status('Mortar set to '+chgPick.name+'.');}
+  else if(editingIdx>=0){const a=ST.anchors[editingIdx];a.color=chgPick.color.slice();a.name=chgPick.name;buildAnchors();preview();status('Material updated; proportion kept at '+Math.round(a.weight)+'%.');}
+  g('chgModal').classList.remove('show');};
+
+// option pulldown (grout = the Option beat)
+const OPT={A:'#b8ada0',B:'#3a342f'};
+g('optSel').onchange=function(){g('jCol').value=OPT[this.value]||'#b8ada0';mortarName=(this.value==='B'?'Dark mortar':'Standard grey mortar');updateMortar();buildMortar();preview();status('Switched to '+this.options[this.selectedIndex].text);};
+
+// save / Import — Import applies the active Option to the wall and dismisses the Cosmos pop-up
+function status(t){g('status').textContent=t;}
+g('sImport').onclick=()=>{const opt=g('optSel').value;status('Imported to scene as Option '+opt+'.');enApply(opt);};
+
+// ===== Surface 6: Enscape apply (chrome from Figma; viewport renders are baked) =====
+const EN_TOOLS=[
+  {d:'M6 3l13 6.5-5.4 1.1-2 5.4z'},                                          // select
+  {d:'M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3'},// move
+  {d:'M20 12a8 8 0 1 1-2.3-5.6M20 4v3.5h-3.5'},                              // rotate
+  {d:'M5 5h6M5 5v6M5 5l8 8M19 19h-6M19 19v-6M19 19l-8-8'},                   // scale
+  {div:1},
+  {on:1,car:1,d:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM7.5 9.5a5 5 0 0 1 5-3.5'}, // material (active)
+  {d:'M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zM12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M5 5l1.8 1.8M17.2 17.2L19 19M5 19l1.8-1.8M17.2 6.8L19 5'}, // light
+  {car:1,d:'M4 8h3l2-2.5h6L17 8h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z'}, // camera
+  {div:1},
+  {d:'M5 7h14M5 12h14M5 17h14M9 5v4M15 10v4M8 15v4'},                        // visual settings
+  {d:'M4 5h16v11H4zM9 20h6M12 16v4'},                                        // video
+  {d:'M12 3v10m0 0l-3.5-3.5M12 13l3.5-3.5M5 18h14'},                         // export
+  {div:1},
+  {d:'M4 4h16v16H4zM4 15l4.5-4 3.5 3 3.5-3.5L20 16'},                        // screenshot
+  {d:'M12 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zM12 3.5l1.4 2.3 2.6-.6.3 2.7 2.5 1.1-1.3 2.4 1.3 2.4-2.5 1.1-.3 2.7-2.6-.6L12 20.5l-1.4-2.3-2.6.6-.3-2.7L5.2 15l1.3-2.4L5.2 10.2l2.5-1.1.3-2.7 2.6.6z'}, // gear
+];
+function buildEnTools(){const t=g('enTools');if(!t||t.childElementCount)return;EN_TOOLS.forEach(x=>{
+  if(x.div){const d=document.createElement('div');d.className='en-div';t.appendChild(d);return;}
+  const b=document.createElement('div');b.className='en-tb'+(x.on?' on':'')+(x.car?' car':'');
+  b.innerHTML='<svg viewBox="0 0 24 24"><path d="'+x.d+'" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  t.appendChild(b);});}
+
+let enApplied=false, enRefineTm;
+function enToast(msg){const t=g('enToast');g('enToastMsg').textContent=msg;t.classList.add('show');clearTimeout(t._tm);t._tm=setTimeout(()=>t.classList.remove('show'),2400);}
+const EN_LAYERS={bare:'enLBare',A:'enLA',B:'enLB'};
+function enShowLayer(which){
+  Object.values(EN_LAYERS).forEach(id=>g(id).classList.remove('show','refining','settle'));
+  const el=g(EN_LAYERS[which]);el.classList.add('show');
+  if(which==='bare')return;
+  el.classList.add('refining');g('enRefine').classList.add('show');                 // live render-settle, NOT a crossfade
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{el.classList.add('settle');el.classList.remove('refining');}));
+  clearTimeout(enRefineTm);                                                          // each swap owns its full refine->settle->teardown cycle
+  enRefineTm=setTimeout(()=>{g('enRefine').classList.remove('show');el.classList.remove('settle');},1050);
+}
+function enApply(opt){                                                                // called by the editor's Import
+  enApplied=true;
+  g('enEmpty').style.display='none';g('enMatCard').style.display='';
+  g('enMatSub').textContent='Option '+opt+(opt==='B'?' · dark mortar':' · default mortar')+' · live link';
+  cosmosClose();
+  enShowLayer(opt);
+  enToast('Main Facade Brick applied · Option '+opt);
+}
+function resetEnscape(){
+  enApplied=false;clearTimeout(enRefineTm);g('enEmpty').style.display='';g('enMatCard').style.display='none';
+  Object.values(EN_LAYERS).forEach(id=>g(id).classList.remove('show','refining','settle'));
+  g('enLBare').classList.add('show');g('enRefine').classList.remove('show');g('enToast').classList.remove('show');
+  g('cosLaunch').classList.add('pulse');
+}
+// Booth reset: returns to the bare-facade opening state between demo runs.
+// Does NOT touch collected feedback (that lives in localStorage / the Sheet).
+function resetDemo(){location.reload();}   // full page restart — the most reliable reset for the booth (returns editor, viewport, ingestion, and pop-up to the opening state; collected feedback in localStorage survives)
+g('pzReset').onclick=resetDemo;
+document.addEventListener('keydown',e=>{ if(e.shiftKey&&e.key==='Backspace'){ if(e.target&&/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))return; e.preventDefault(); resetDemo(); } });
+g('enMatCard').onclick=()=>cosmosOpen('editor');
+g('enEmpty').onclick=()=>cosmosOpen('browser');
+g('pzTakeoff').onclick=()=>{if(!enApplied){enToast('Apply a material first');return;}openTakeoff();};
+
+// ===== Surface 8: branded quantity takeoff (real numbers from the authored material) =====
+const SF_TO_M2=0.09290304;
+const EPD_BRICK={gwp_a1a3:31.8,gwp_a4:4.24,gwp_a5b:2.08,gwp_a5m:8.25,gwp_b2:0,gwp_c2:1.36,gwp_c4:2.10,gwp_d:-0.061,ap_a1a3:0.368,ap_total:0.46,sfp_a1a3:2.73,sfp_total:3.7,ep_m_a1a3:0.023,ep_m_total:0.035,ep_f_a1a3:8.02e-4,ep_f_total:1.3e-3,odp_a1a3:6.39e-8,odp_total:1.1e-7};
+function computeTakeoff(){
+  const p=readParams();const wallW=p.wallW_ft*12,wallH=p.wallH_ft*12;
+  const layout=layoutBricks(wallW,wallH,p.eL,p.eH,p.eD,p.jW,p.bond);
+  const active=ST.anchors.filter(a=>a.active);const totalW=active.reduce((s,a)=>s+a.weight,0)||1;
+  const tally={};for(const a of ST.anchors)tally[a.id]={name:a.name,color:a.color,stretcher:0,header:0,cutStretcher:0,cutHeader:0};
+  for(const brick of layout){const bSeed=p.seed*10000+brick.ci*1000+brick.col;const rng=mulberry32(bSeed);
+    let r=rng()*totalW,picked=active[0];for(const a of active){r-=a.weight;if(r<=0){picked=a;break;}}if(!picked)continue;
+    const t=tally[picked.id];if(!t)continue;const isCut=brick.w<brick.nomW-0.05;
+    if(brick.type==='h'){isCut?t.cutHeader++:t.header++;}else{isCut?t.cutStretcher++:t.stretcher++;}}
+  const wallArea_sf=(wallW*wallH)/144;const courseH=p.eH+p.jW;const totalCourses=Math.ceil(wallH/courseH);
+  const hJointLength_ft=(totalCourses-1)*(wallW/12);const vJointLength_ft=layout.length*(p.eH/12);const totalJointLength_ft=hJointLength_ft+vJointLength_ft;
+  let grandFull=0,grandCut=0,grandAll=0;const rows=[];
+  for(const a of ST.anchors){const t=tally[a.id];const full=t.stretcher+t.header,cut=t.cutStretcher+t.cutHeader,total=full+cut;
+    if(total===0&&!a.active)continue;grandFull+=full;grandCut+=cut;grandAll+=total;
+    rows.push(Object.assign({},t,{full,cut,total,with5:Math.ceil(total*1.05),with10:Math.ceil(total*1.10)}));}
+  const wallArea_m2=wallArea_sf*SF_TO_M2;const E=EPD_BRICK;
+  const gwpStages=[['A1–A3 Production',E.gwp_a1a3],['A4 Transport to site',E.gwp_a4],['A5 Installation (brick)',E.gwp_a5b],['A5 Installation (mortar)',E.gwp_a5m],['B2 Maintenance',E.gwp_b2],['C2 Transport to end-of-life',E.gwp_c2],['C4 Disposal',E.gwp_c4],['D Reuse credit',E.gwp_d]];
+  const gwpExclD=gwpStages.filter(s=>!s[0].startsWith('D')).reduce((s,r)=>s+r[1],0);const gwpInclD=gwpExclD+E.gwp_d;
+  return {p,wallArea_sf,wallArea_m2,totalCourses,totalJointLength_ft,rows,grandFull,grandCut,grandAll,gwpStages,gwpExclD,gwpInclD,E};
+}
+const tkNum=n=>Math.round(n).toLocaleString('en-US');
+function renderTakeoff(){
+  const d=computeTakeoff(),p=d.p;
+  const matName=g('saveName').value||'Main Facade Brick';
+  const optLabel=g('optSel').options[g('optSel').selectedIndex].text;
+  const bondLabel=(BONDS.find(b=>b[0]===p.bond)||[0,p.bond])[1];
+  const sizeLabel=g('sizePreset').options[g('sizePreset').selectedIndex].text.split(' (')[0];
+  const totalCO2=d.gwpInclD*d.wallArea_m2;
+  let matRows='';for(const r of d.rows){const rgb='rgb('+r.color.map(Math.round).join(',')+')';
+    matRows+=`<tr><td><span class="sw" style="background:${rgb}"></span>${r.name}</td><td>${tkNum(r.stretcher)}</td><td>${tkNum(r.header)}</td><td>${tkNum(r.cutStretcher)}</td><td>${tkNum(r.cutHeader)}</td><td>${tkNum(r.full)}</td><td>${tkNum(r.cut)}</td><td>${tkNum(r.total)}</td></tr>`;}
+  matRows+=`<tr class="tot"><td>Total</td><td></td><td></td><td></td><td></td><td>${tkNum(d.grandFull)}</td><td>${tkNum(d.grandCut)}</td><td>${tkNum(d.grandAll)}</td></tr>`;
+  let ordRows='';for(const r of d.rows){ordRows+=`<tr><td>${r.name}</td><td>${tkNum(r.total)}</td><td>${tkNum(r.with5)}</td><td>${tkNum(r.with10)}</td></tr>`;}
+  ordRows+=`<tr class="tot"><td>Total</td><td>${tkNum(d.grandAll)}</td><td>${tkNum(Math.ceil(d.grandAll*1.05))}</td><td>${tkNum(Math.ceil(d.grandAll*1.10))}</td></tr>`;
+  let gwpRows='';for(const [name,val] of d.gwpStages){gwpRows+=`<tr><td>${name}</td><td>${val.toFixed(2)}</td><td>${tkNum(val*d.wallArea_m2)}</td></tr>`;}
+  gwpRows+=`<tr class="tot"><td>Total (incl. reuse credit)</td><td>${d.gwpInclD.toFixed(2)}</td><td>${tkNum(totalCO2)}</td></tr>`;
+  const E=d.E,fmtSci=v=>Math.abs(v)>=0.01?v.toFixed(2):v.toExponential(1);
+  const cats=[['Acidification','kg SO₂-eq',E.ap_a1a3,E.ap_total],['Smog formation','kg O₃-eq',E.sfp_a1a3,E.sfp_total],['Eutrophication, marine','kg N-eq',E.ep_m_a1a3,E.ep_m_total],['Eutrophication, freshwater','kg P-eq',E.ep_f_a1a3,E.ep_f_total],['Ozone depletion','kg CFC-11-eq',E.odp_a1a3,E.odp_total]];
+  let otherRows='';for(const [name,unit,a13,full] of cats){otherRows+=`<tr><td>${name} <span style="color:var(--n5);font-weight:400">(${unit})</span></td><td>${fmtSci(a13*d.wallArea_m2)}</td><td>${fmtSci(full*d.wallArea_m2)}</td></tr>`;}
+  const nSamples=d.rows.filter(r=>r.total>0).length;
+  g('tkPage').innerHTML=`
+   <div class="tk-band">
+     <span class="lg"><svg viewBox="0 0 40 40" style="width:100%;height:100%"><use href="#g-chaos"/></svg></span>
+     <div><div class="sub">Chaos Cosmos · Smart Materials</div><h1>Material Quantity Takeoff</h1></div>
+     <span class="sp"></span>
+     <div class="ref">Computed from the authored Smart Material<br>Representative facade · estimating use</div>
+   </div>
+   <div class="tk-meta">
+     <div><div class="k">Material</div><div class="v">${matName}</div></div>
+     <div><div class="k">Option</div><div class="v">${optLabel}</div></div>
+     <div><div class="k">Facade area</div><div class="v">${tkNum(d.wallArea_sf)} sf</div></div>
+     <div><div class="k">Seed</div><div class="v">#${p.seed}</div></div>
+   </div>
+   <div class="tk-body">
+     <div class="tk-hi">
+       <div class="card"><div class="lbl">Total units</div><div class="big">${tkNum(d.grandAll)}</div></div>
+       <div class="card"><div class="lbl">Cut units</div><div class="big">${tkNum(d.grandCut)}</div></div>
+       <div class="card"><div class="lbl">Mortar joint</div><div class="big">${tkNum(d.totalJointLength_ft)} <span style="font-size:13px">lf</span></div></div>
+       <div class="card"><div class="lbl">Embodied carbon</div><div class="big">${tkNum(totalCO2)} <span style="font-size:13px">kg CO₂e</span></div></div>
+     </div>
+     <div class="tk-sec"><h2>Material specification</h2>
+       <div class="tk-spec">
+         <div class="r"><span>Unit size</span><span>${sizeLabel}</span></div>
+         <div class="r"><span>Nominal</span><span>${inchStr(p.eL)} × ${inchStr(p.eH)} × ${inchStr(p.eD)}</span></div>
+         <div class="r"><span>Bond</span><span>${bondLabel}</span></div>
+         <div class="r"><span>Joint width</span><span>${inchStr(p.jW)}</span></div>
+         <div class="r"><span>Joint profile</span><span>${p.jProfile}</span></div>
+         <div class="r"><span>Mortar</span><span>${mortarName}</span></div>
+         <div class="r"><span>Courses</span><span>${d.totalCourses}</span></div>
+         <div class="r"><span>Units / sf</span><span>${(d.grandAll/d.wallArea_sf).toFixed(1)}</span></div>
+         <div class="r"><span>Representative samples</span><span>${nSamples}</span></div>
+       </div>
+     </div>
+     <div class="tk-sec"><h2>Material quantities</h2>
+       <table class="tk-tbl"><thead><tr><th>Representative sample</th><th>Full str.</th><th>Full hdr.</th><th>Cut str.</th><th>Cut hdr.</th><th>Full</th><th>Cut</th><th>Total</th></tr></thead><tbody>${matRows}</tbody></table>
+     </div>
+     <div class="tk-sec"><h2>Ordering — with waste allowance</h2>
+       <table class="tk-tbl"><thead><tr><th>Representative sample</th><th>Exact</th><th>+5%</th><th>+10%</th></tr></thead><tbody>${ordRows}</tbody></table>
+     </div>
+     <div class="tk-sec"><h2>Environmental impact — global warming potential</h2>
+       <table class="tk-tbl"><thead><tr><th>Life-cycle stage</th><th>kg CO₂e / m²</th><th>Wall total (kg CO₂e)</th></tr></thead><tbody>${gwpRows}</tbody></table>
+     </div>
+     <div class="tk-sec"><h2>Environmental impact — other categories (wall total)</h2>
+       <table class="tk-tbl"><thead><tr><th>Indicator</th><th>Production (A1–A3)</th><th>Full life cycle</th></tr></thead><tbody>${otherRows}</tbody></table>
+     </div>
+     <div class="tk-foot">
+       Environmental data: BIA Clay Masonry Products Industry Average EPD (EPD11101, issued 2025-11-07), cradle-to-grave modules A1–D, functional unit 1 m² installed clay brick wall at 112.18 kg/m², TRACI 2.2. Quantities computed from the authored Smart Material blend over a representative facade of ${tkNum(d.wallArea_sf)} sf (${d.wallArea_m2.toFixed(1)} m²). Estimating use only; verify against construction documents and the project scene takeoff.
+     </div>
+   </div>`;
+}
+function tkDownload(content,filename,type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function takeoffCSV(){
+  const d=computeTakeoff(),p=d.p;const q=s=>'"'+String(s).replace(/"/g,'""')+'"';let csv='';
+  csv+='CHAOS COSMOS - SMART MATERIALS - MATERIAL QUANTITY TAKEOFF\n';
+  csv+='Material,'+q(g('saveName').value||'Main Facade Brick')+'\n';
+  csv+='Option,'+q(g('optSel').options[g('optSel').selectedIndex].text)+'\n';
+  csv+='Seed,'+p.seed+'\n\n';
+  csv+='FACADE\nArea (sf),'+d.wallArea_sf.toFixed(1)+'\nArea (m2),'+d.wallArea_m2.toFixed(2)+'\nCourses,'+d.totalCourses+'\n\n';
+  csv+='SPECIFICATION\nLength,'+q(inchStr(p.eL))+'\nHeight,'+q(inchStr(p.eH))+'\nDepth,'+q(inchStr(p.eD))+'\nJoint width,'+q(inchStr(p.jW))+'\nJoint profile,'+q(p.jProfile)+'\nBond,'+q(p.bond.replace('_',' '))+'\nMortar,'+q(mortarName)+'\n\n';
+  csv+='MATERIAL QUANTITIES\nRepresentative sample,Color (RGB),Full stretchers,Full headers,Cut stretchers,Cut headers,Total full,Total cut,Total all\n';
+  for(const r of d.rows){csv+=q(r.name)+','+q(r.color.join(' '))+','+r.stretcher+','+r.header+','+r.cutStretcher+','+r.cutHeader+','+r.full+','+r.cut+','+r.total+'\n';}
+  csv+='TOTAL,,,,,,'+d.grandFull+','+d.grandCut+','+d.grandAll+'\n\n';
+  csv+='ORDERING (with waste allowance)\nRepresentative sample,Exact,+5%,+10%\n';
+  for(const r of d.rows){csv+=q(r.name)+','+r.total+','+r.with5+','+r.with10+'\n';}
+  csv+='TOTAL,'+d.grandAll+','+Math.ceil(d.grandAll*1.05)+','+Math.ceil(d.grandAll*1.10)+'\n\n';
+  csv+='SUMMARY\nTotal bricks,'+d.grandAll+'\nFull bricks,'+d.grandFull+'\nCut bricks,'+d.grandCut+'\nBricks per sf,'+(d.grandAll/d.wallArea_sf).toFixed(1)+'\nMortar joint length (linear ft),'+d.totalJointLength_ft.toFixed(0)+'\n\n';
+  csv+='ENVIRONMENTAL IMPACT - GLOBAL WARMING POTENTIAL (kg CO2-eq)\n';
+  csv+='Source,'+q('BIA Clay Masonry Products Industry Average EPD (EPD11101, 2025-11-07)')+'\n';
+  csv+='Scope,'+q('Cradle-to-grave, modules A1-D')+'\n';
+  csv+='Life-cycle stage,Per m2,Wall total\n';
+  for(const [name,val] of d.gwpStages){csv+=q(name)+','+val.toFixed(3)+','+(val*d.wallArea_m2).toFixed(1)+'\n';}
+  csv+='Total (incl. reuse credit),'+d.gwpInclD.toFixed(3)+','+(d.gwpInclD*d.wallArea_m2).toFixed(1)+'\n\n';
+  csv+='OTHER IMPACT CATEGORIES (wall total)\nIndicator,Production A1-A3,Full life cycle\n';
+  const Ec=d.E,cats2=[['Acidification (kg SO2-eq)',Ec.ap_a1a3,Ec.ap_total],['Smog formation (kg O3-eq)',Ec.sfp_a1a3,Ec.sfp_total],['Eutrophication marine (kg N-eq)',Ec.ep_m_a1a3,Ec.ep_m_total],['Eutrophication freshwater (kg P-eq)',Ec.ep_f_a1a3,Ec.ep_f_total],['Ozone depletion (kg CFC-11-eq)',Ec.odp_a1a3,Ec.odp_total]];
+  for(const [n,a,f] of cats2){csv+=q(n)+','+(a*d.wallArea_m2).toExponential(3)+','+(f*d.wallArea_m2).toExponential(3)+'\n';}
+  tkDownload(csv,'smart-materials-takeoff_seed'+p.seed+'.csv','text/csv');
+}
+function openTakeoff(){renderTakeoff();g('tkModal').classList.add('show');}
+g('tkClose').onclick=()=>g('tkModal').classList.remove('show');
+g('tkPdf').onclick=()=>window.print();
+g('tkCsv').onclick=takeoffCSV;
+
+// ===== Customer feedback survey (local-first capture + central Google Sheet sync) =====
+// To enable central sync: deploy the Apps Script in ../feedback-apps-script.gs as a Web App
+// ("anyone with the link") and paste its /exec URL here. Empty = local-only (still exportable).
+const FEEDBACK_ENDPOINT='https://script.google.com/macros/s/AKfycbzc0Nbyca2LYEz5enWEkrW_Y5gNZpj-evJRljNTxslbPWT9Jthmi9gpreg8kvw0uq5KZw/exec';
+const FB_KEY='sm_feedback';
+let fbUseful=0, fbLikely='';
+function fbLoad(){try{return JSON.parse(localStorage.getItem(FB_KEY))||[];}catch(e){return [];}}
+function fbStore(arr){try{localStorage.setItem(FB_KEY,JSON.stringify(arr));}catch(e){}}
+let fbMem=fbLoad();                                                  // in-memory mirror (covers localStorage-disabled browsers)
+function fbBuildStars(){const w=g('fbStars');w.innerHTML='';for(let i=1;i<=5;i++){const s=document.createElement('span');s.className='fb-star';s.textContent='★';s.dataset.v=i;s.onclick=()=>{fbUseful=i;[...w.children].forEach(c=>c.classList.toggle('on',+c.dataset.v<=i));};w.appendChild(s);}}
+function fbReset(){fbUseful=0;fbLikely='';g('fbRole').value='';g('fbComment').value='';g('fbEmail').value='';g('fbMini').textContent='';[...g('fbStars').children].forEach(c=>c.classList.remove('on'));[...g('fbLikely').children].forEach(c=>c.classList.remove('on'));g('fbForm').style.display='';g('fbThanks').style.display='none';}
+function openFeedback(){fbReset();g('fbModal').classList.add('show');}
+function closeFeedback(){g('fbModal').classList.remove('show');}
+g('pzFeedback').onclick=openFeedback;g('pzExport').onclick=fbExportCSV;
+g('fbClose').onclick=g('fbCancel').onclick=g('fbDone').onclick=closeFeedback;
+g('fbAnother').onclick=fbReset;
+[...g('fbLikely').children].forEach(b=>b.onclick=()=>{fbLikely=b.dataset.v;[...g('fbLikely').children].forEach(c=>c.classList.toggle('on',c===b));});
+// fire-and-forget POST — NOT awaited, so the UI never waits on the network (matches Enscape On-Site)
+function fbSync(rec){ if(!FEEDBACK_ENDPOINT)return; try{ fetch(FEEDBACK_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(rec)}); }catch(e){} }
+g('fbSubmit').onclick=()=>{
+  if(!fbUseful){g('fbMini').textContent='Please tap a usefulness rating first.';return;}
+  const rec={id:'fb_'+Date.now()+'_'+Math.floor(Math.random()*1e4),ts:new Date().toISOString(),role:g('fbRole').value,useful:fbUseful,likelihood:fbLikely,comment:g('fbComment').value.trim(),email:g('fbEmail').value.trim(),demo:'smart-materials-booth',synced:!!FEEDBACK_ENDPOINT};
+  fbMem.push(rec);fbStore(fbMem);                                   // local-first save (instant)
+  fbSync(rec);                                                      // background POST; thank-you shows immediately
+  g('fbForm').style.display='none';g('fbThanks').style.display='';
+};
+// presenter export: Ctrl+Shift+F downloads all collected responses as CSV
+function fbExportCSV(){
+  const data=fbLoad().length?fbLoad():fbMem;const q=s=>'"'+String(s==null?'':s).replace(/"/g,'""')+'"';
+  let csv='Timestamp,Role,Useful (1-5),Likelihood,Comment,Email,Demo,Synced,ID\n';
+  for(const r of data){csv+=[q(r.ts),q(r.role),q(r.useful),q(r.likelihood),q(r.comment),q(r.email),q(r.demo),q(r.synced),q(r.id)].join(',')+'\n';}
+  tkDownload(csv,'smart-materials-feedback_'+data.length+'.csv','text/csv');
+  enToast(data.length+' feedback response'+(data.length===1?'':'s')+' exported');
+}
+document.addEventListener('keydown',e=>{ if(e.ctrlKey&&e.shiftKey&&(e.key==='F'||e.key==='f')){ e.preventDefault(); fbExportCSV(); } });
+fbBuildStars();
+
+// ===== Cosmos pop-up router (floats over the always-on Enscape base) =====
+function showCosmos(pane){['Browser','Ingest','Editor'].forEach(p=>g('cos'+p).classList.toggle('show',p.toLowerCase()===pane));if(pane==='editor'){SS=SS_HI;draw();}const sp=g('cosmosPop');if(sp)sp.scrollTop=0;}
+function cosmosOpen(pane){g('cosmosPop').style.display='block';g('cosLaunch').classList.add('on');g('cosLaunch').classList.remove('pulse');showCosmos(pane||'browser');}
+function cosmosClose(){g('cosmosPop').style.display='none';g('cosLaunch').classList.remove('on');if(!enApplied)g('cosLaunch').classList.add('pulse');}
+g('cosLaunch').onclick=()=>{const open=g('cosmosPop').style.display!=='none';if(open)cosmosClose();else cosmosOpen(enApplied?'editor':'browser');};
+function initCosmosChrome(){
+  document.querySelectorAll('.cos-pop .cz-title').forEach(tb=>{
+    const x=document.createElement('span');x.className='cz-x';x.textContent='✕';x.title='Close Cosmos';
+    x.onclick=(e)=>{e.stopPropagation();cosmosClose();};tb.appendChild(x);
+    tb.addEventListener('mousedown',e=>{if(e.target===x)return;const pop=g('cosmosPop'),r=pop.getBoundingClientRect();
+      pop.style.left=r.left+'px';pop.style.top=r.top+'px';pop.style.right='auto';tb.classList.add('drag');
+      const ox=e.clientX-r.left,oy=e.clientY-r.top;
+      const mv=ev=>{const w=pop.offsetWidth,h=pop.offsetHeight;pop.style.left=clamp(ev.clientX-ox,0,Math.max(0,window.innerWidth-w))+'px';pop.style.top=clamp(ev.clientY-oy,40,Math.max(40,window.innerHeight-h))+'px';};
+      const up=()=>{document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);tb.classList.remove('drag');};
+      document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up);});
+  });
+}
+const MR='';
+const TYPES=[
+  {k:'brick',name:'Brick',st:'live',img:'brick.png'},
+  {k:'tile',name:'Tile',st:'av',img:'tile.png'},
+  {k:'wood',name:'Wood',st:'av',img:'wood.png'},
+  {k:'roof',name:'Roof',st:'av',img:'roof.png'},
+  {k:'pavers',name:'Pavers',st:'av',img:'pavement.png'},
+  {k:'stone',name:'Stone',st:'cs',img:'white_stucco.png'},
+  {k:'concrete',name:'Concrete',st:'cs',img:'white_stucco.png'},
+  {k:'stucco',name:'Stucco',st:'cs',img:'white_stucco.png'},
+  {k:'terrazzo',name:'Terrazzo',st:'cs',img:'white_stucco.png'},
+  {k:'glass',name:'Glass',st:'cs',img:'white_stucco.png'},
+  {k:'metal',name:'Metal panel',st:'cs',img:'white_stucco.png'},
+];
+let typePick=null;
+function openTypePicker(){typePick=null;const grid=g('typeGrid');grid.innerHTML='';
+  TYPES.forEach(t=>{const it=document.createElement('div');it.className='type-it'+(t.st==='cs'?' soon':'');
+    const bd=t.st==='live'?'<span class="bd live">Available</span>':(t.st==='av'?'<span class="bd av">Available</span>':'<span class="bd cs">Coming soon</span>');
+    it.innerHTML='<img class="sw" src="'+MR+t.img+'" alt=""><div class="nm">'+t.name+'</div>'+bd;
+    if(t.st!=='cs')it.onclick=()=>{typePick=t;[...grid.children].forEach(c=>c.classList.remove('on'));it.classList.add('on');g('typeStart').disabled=(t.st!=='live');g('typeNote').textContent=(t.st==='live')?'':'Only Brick is wired in this prototype.';};
+    grid.appendChild(it);});
+  g('typeStart').disabled=true;g('typeNote').textContent='Choose a surface to author.';
+  g('typeModal').classList.add('show');}
+g('smGenerate').onclick=openTypePicker;g('catAI').onclick=openTypePicker;
+g('typeClose').onclick=g('typeCancel').onclick=()=>g('typeModal').classList.remove('show');
+g('typeStart').onclick=()=>{if(typePick&&typePick.st==='live'){g('typeModal').classList.remove('show');resetIngest();showCosmos('ingest');}};
+
+// ===== Surface 3: ingestion (faked) =====
+let ingMode='image', ingLoaded=false;
+function renderDrop(){const d=g('ingDrop');if(ingLoaded){d.classList.add('has');d.innerHTML='<img src="'+MR+'Brick_Wall.jpg" alt="">';}else{d.classList.remove('has');d.innerHTML='<div class="dz-ic">⬆</div><div>Click to add or drop an elevation photo<br><span style="color:var(--n4)">jpg / png / tiff / webp</span></div>';}}
+function updateIngReady(){const ready=(ingMode==='image')?ingLoaded:(g('ingUrl').value.trim().length>0);g('ingGenerate').disabled=!ready;}
+function setIngMode(m){ingMode=m;document.querySelectorAll('.ing-tab').forEach(b=>b.classList.toggle('on',b.dataset.m===m));g('ingImagePane').style.display=(m==='image')?'':'none';g('ingUrlPane').style.display=(m==='url')?'flex':'none';updateIngReady();}
+function loadSample(){ingLoaded=true;renderDrop();updateIngReady();g('ingNote').textContent='Source elevation loaded. Generate to analyze it.';}
+function resetIngest(){ingLoaded=false;g('ingUrl').value='';g('ingForm').style.display='';g('ingProgress').style.display='none';renderDrop();setIngMode('image');g('ingNote').textContent='Drop a photo or paste a manufacturer URL, then Generate.';}
+document.querySelectorAll('.ing-tab').forEach(b=>b.onclick=()=>setIngMode(b.dataset.m));
+g('ingDrop').onclick=loadSample;g('ingSample').onclick=loadSample;g('ingUrl').addEventListener('input',updateIngReady);
+g('ingGenerate').onclick=()=>{g('ingForm').style.display='none';g('ingProgress').style.display='';
+  const steps=['Detecting pattern…','Identifying bond pattern…','Selecting representative samples…','Calibrating colors to the source…'];let i=0;g('ingStatus').textContent=steps[0];
+  const tick=()=>{i++;if(i<steps.length){g('ingStatus').textContent=steps[i];setTimeout(tick,750);}else{setTimeout(()=>{detailMode=false;g('viewToggle').textContent='Detail';showCosmos('editor');resetIngest();},850);}};setTimeout(tick,750);};
+
+// init
+initAnchors();buildAnchors();buildMortar();updateMortar();refreshDisplays();checkDist();setMode('asym');buildEnTools();initCosmosChrome();resetEnscape();
+generateScene(true);rasterize('lit');
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>rasterize(ST.view));
+</script>
+</body>
+</html>
