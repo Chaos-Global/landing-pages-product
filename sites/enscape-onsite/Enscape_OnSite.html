@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaos On-Site Coordination · Design Board v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================================
+   CHAOS DESIGN SYSTEM · TOKENS  (exact, from BrandSkill/DesignReference)
+   ============================================================================ */
+:root{
+  --white:#FFFFFF; --n1:#F6F6F6; --n2:#EDEDED; --n3:#DBDBDB; --n4:#ABABAB;
+  --n5:#828282; --n6:#525252; --n7:#3B3B3B; --n8:#272727; --black:#1C1C1C;
+  --red1:#850305; --red2:#B5161C; --red:#E1161C; --red4:#E74549;
+  --red5:#FF8284; --red6:#F6B9BB; --red7:#FFE8E8;
+  --blue:#0DB5FF; --green:#77B22A; --orange:#F3712B; --err:#E1161C;
+
+  --font:"Poppins","Segoe UI",system-ui,sans-serif;
+  --h31:30.79px; --h23:23.10px; --b17:17.33px; --b14:14.5px; --b13:13px; --b11:11px; --b10:9.75px;
+
+  --sp120:120px; --sp80:80px; --sp60:60px; --sp30:30px; --sp25:25px; --sp20:20px; --sp15:15px;
+  --sh30:30px; --sh15:15px; --sh10:10px;
+
+  --r-sm:6px; --r-md:10px; --r-lg:14px; --r-pill:999px;  /* inferred · flagged */
+  --ease:cubic-bezier(.4,0,.2,1);
+  --t-fast:120ms; --t-base:240ms; --t-cross:300ms; --t-page:340ms;
+
+  --sh-1:0 1px 2px rgba(28,28,28,.08), 0 1px 3px rgba(28,28,28,.06);
+  --sh-2:0 4px 12px rgba(28,28,28,.12), 0 2px 4px rgba(28,28,28,.08);
+  --sh-3:0 12px 32px rgba(28,28,28,.22), 0 4px 10px rgba(28,28,28,.14);
+}
+
+/* ============================================================================
+   BOARD CHROME (the review document)
+   ============================================================================ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font);background:#101012;color:var(--n2);line-height:1.55;padding:64px 40px 160px;}
+.board{max-width:1480px;margin:0 auto;}
+.board-head{margin-bottom:60px;max-width:1000px;}
+.board-kicker{font-size:var(--b11);letter-spacing:.14em;text-transform:uppercase;color:var(--n5);font-weight:700;margin-bottom:16px;}
+.board-title{font-size:var(--h31);font-weight:700;color:var(--white);line-height:1.2;letter-spacing:-.01em;}
+.board-title b{color:var(--red5);}
+.board-sub{font-size:var(--b14);color:var(--n4);margin-top:18px;max-width:820px;}
+.board-meta{display:flex;gap:28px;margin-top:28px;flex-wrap:wrap;font-size:var(--b11);color:var(--n5);}
+.board-meta span b{color:var(--n2);font-weight:700;}
+
+.section{margin:92px 0 0;}
+.sec-head{display:flex;align-items:baseline;gap:18px;border-bottom:1px solid #26262a;padding-bottom:18px;margin-bottom:40px;}
+.sec-num{font-size:var(--b13);font-weight:700;color:var(--red5);font-variant-numeric:tabular-nums;}
+.sec-title{font-size:var(--h23);font-weight:700;color:var(--white);letter-spacing:-.01em;}
+.sec-note{font-size:var(--b13);color:var(--n5);margin-left:auto;max-width:430px;text-align:right;}
+.subhead{font-size:var(--b11);letter-spacing:.12em;text-transform:uppercase;color:var(--n5);font-weight:700;margin:46px 0 20px;}
+.annot{font-size:var(--b13);color:var(--n4);max-width:820px;margin:14px 0 0;}
+.annot.tight{margin-top:8px;} .annot b{color:var(--n2);}
+
+.callout{border-left:3px solid var(--red);background:#19181a;border-radius:0 var(--r-md) var(--r-md) 0;padding:18px 22px;margin:24px 0;max-width:900px;}
+.callout.blue{border-left-color:var(--blue);} .callout.green{border-left-color:var(--green);}
+.callout h4{font-size:var(--b13);font-weight:700;color:var(--white);margin-bottom:6px;}
+.callout p{font-size:var(--b13);color:var(--n4);} .callout p+p{margin-top:8px;}
+.tag{display:inline-block;font-size:var(--b10);font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:var(--r-sm);background:#26262a;color:var(--n4);}
+.tag.dec{background:rgba(225,22,28,.16);color:var(--red5);}
+.tag.ok{background:rgba(119,178,42,.16);color:#9bd34e;}
+
+.grid{display:grid;gap:var(--sp30);}
+.card{background:#171719;border:1px solid #232327;border-radius:var(--r-lg);padding:26px;}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px;}
+.sw{border-radius:var(--r-md);overflow:hidden;border:1px solid #232327;background:#171719;}
+.sw .chip{height:60px;} .sw .meta{padding:9px 11px;}
+.sw .nm{font-size:var(--b11);font-weight:700;color:var(--n1);}
+.sw .hx{font-size:var(--b10);color:var(--n5);text-transform:uppercase;}
+.sw .role{font-size:var(--b10);color:var(--n6);margin-top:3px;}
+.type-row{display:flex;align-items:baseline;gap:24px;padding:14px 0;border-bottom:1px solid #1f1f23;}
+.type-row .lbl{font-size:var(--b10);color:var(--n5);width:160px;flex:none;text-transform:uppercase;letter-spacing:.06em;}
+.type-row .spec{font-family:var(--font);color:var(--white);}
+.space-scale{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;}
+.space-scale .bar{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.space-scale .bar i{display:block;background:linear-gradient(var(--red5),var(--red));border-radius:3px 3px 0 0;width:22px;}
+.space-scale .bar span{font-size:var(--b10);color:var(--n5);}
+.icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px;}
+.icn{display:flex;flex-direction:column;align-items:center;gap:9px;padding:18px 8px;background:#171719;border:1px solid #232327;border-radius:var(--r-md);text-align:center;}
+.icn svg{width:26px;height:26px;color:var(--n1);}
+.icn .nm{font-size:var(--b10);color:var(--n5);}
+.icn.active{background:rgba(225,22,28,.10);border-color:rgba(225,22,28,.4);}
+.icn.active svg{color:var(--red);} .icn.active .nm{color:var(--red5);}
+.specimens{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;}
+.spec-cell{background:#171719;border:1px solid #232327;border-radius:var(--r-lg);padding:24px;}
+.spec-cell .cap{font-size:var(--b10);text-transform:uppercase;letter-spacing:.1em;color:var(--n5);margin-bottom:18px;font-weight:700;}
+.spec-stage{background:var(--n1);border-radius:var(--r-md);padding:24px;display:flex;flex-direction:column;gap:16px;align-items:flex-start;}
+.spec-stage.center{align-items:center;justify-content:center;}
+
+.btn{font-family:var(--font);font-size:var(--b13);font-weight:700;border:none;border-radius:var(--r-md);padding:11px 20px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background var(--t-fast) var(--ease);}
+.btn svg{width:18px;height:18px;}
+.btn-primary{background:var(--red);color:#fff;} .btn-primary:hover{background:var(--red2);}
+.btn-secondary{background:var(--white);color:var(--black);border:1px solid var(--n3);} .btn-secondary:hover{background:var(--n1);}
+.btn-ghost{background:transparent;color:var(--n6);} .btn-ghost:hover{background:var(--n2);}
+.field{width:100%;background:#fff;border:1px solid var(--n3);border-radius:var(--r-md);padding:12px 14px;font-family:var(--font);font-size:var(--b13);color:var(--black);}
+.field::placeholder{color:var(--n4);}
+.field-lbl{font-size:var(--b11);font-weight:700;color:var(--n6);margin-bottom:8px;}
+
+.tri{display:inline-flex;background:var(--n2);border-radius:var(--r-pill);padding:3px;gap:2px;}
+.tri button{font-family:var(--font);border:none;background:transparent;cursor:pointer;width:48px;height:42px;border-radius:var(--r-pill);display:grid;place-items:center;color:var(--n5);transition:all var(--t-fast) var(--ease);}
+.tri button svg{width:20px;height:20px;}
+.tri button.on{background:#fff;color:var(--black);box-shadow:var(--sh-1);}
+.tri button.on.trans{background:#fff;color:var(--red);box-shadow:var(--sh-1);}
+.tri-lbl{font-size:var(--b10);color:var(--n5);text-transform:uppercase;letter-spacing:.06em;margin-top:8px;}
+.status{display:inline-flex;align-items:center;gap:7px;font-size:var(--b11);font-weight:700;padding:5px 10px;border-radius:var(--r-pill);}
+.status .dot{width:8px;height:8px;border-radius:50%;flex:none;}
+.status.current{background:rgba(119,178,42,.14);color:#5d8a20;} .status.current .dot{background:var(--green);}
+.status.behind{background:rgba(243,113,43,.16);color:#c0531a;} .status.behind .dot{background:var(--orange);box-shadow:0 0 0 3px rgba(243,113,43,.22);}
+.status.failed{background:rgba(225,22,28,.14);color:#b5161c;} .status.failed .dot{background:var(--err);}
+
+.demo-spine{background:#fff;border:1px solid var(--n2);border-radius:var(--r-md);display:inline-flex;flex-direction:column;padding:10px 8px;gap:6px;box-shadow:var(--sh-1);}
+.demo-fab{width:68px;height:68px;border-radius:50%;background:var(--red);display:grid;place-items:center;box-shadow:var(--sh-3);}
+.demo-fab svg{width:32px;height:32px;color:#fff;}
+.pip-demo{position:relative;width:56px;height:56px;border-radius:var(--r-md);background:#fff;border:1px solid var(--n2);display:grid;place-items:center;color:var(--n7);}
+.pip-demo svg{width:28px;height:28px;}
+.pip-demo .pd{position:absolute;top:7px;right:9px;width:12px;height:12px;border-radius:50%;border:2px solid #fff;}
+.pip-demo .pd.orange{background:var(--orange);box-shadow:0 0 0 3px rgba(243,113,43,.18);}
+.pip-demo .pd.red{background:var(--err);box-shadow:0 0 0 3px rgba(225,22,28,.18);}
+
+/* ============================================================================
+   THE iPAD STAGE  (1366 × 1024, scaled to fit)
+   ============================================================================ */
+.stage-wrap{position:relative;width:100%;display:flex;justify-content:center;}
+.fitter{position:relative;width:100%;}
+.ipad{position:relative;width:1366px;height:1024px;transform-origin:top left;background:#0e0e10;border-radius:18px;overflow:hidden;box-shadow:0 0 0 12px #0b0b0d, var(--sh-3);}
+
+/* ---- Single Chaos top bar (no Procore chrome) ---- */
+.topbar{position:absolute;top:0;left:0;right:0;height:54px;background:#fff;border-bottom:1px solid var(--n2);display:flex;align-items:center;padding:0 18px;gap:13px;z-index:30;}
+.topbar .mark{width:30px;height:30px;border-radius:7px;overflow:hidden;flex:none;box-shadow:var(--sh-1);}
+.topbar .mark svg{display:block;width:100%;height:100%;}
+.topbar .titles{display:flex;flex-direction:column;line-height:1.16;}
+.topbar .t1{font-size:var(--b14);font-weight:700;color:var(--black);}
+.topbar .t2{font-size:var(--b10);color:var(--n5);}
+.topbar .right{margin-left:auto;display:flex;align-items:center;gap:14px;}
+.conn{display:inline-flex;align-items:center;gap:7px;font-size:var(--b11);color:var(--n5);font-weight:700;}
+.conn .d{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.iconbtn{width:46px;height:46px;border-radius:var(--r-md);display:grid;place-items:center;color:var(--n6);background:transparent;border:none;cursor:pointer;}
+.iconbtn svg{width:22px;height:22px;} .iconbtn:hover{background:var(--n1);}
+.av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#e9e9ec,#cfcfd4);display:grid;place-items:center;color:var(--n6);font-size:var(--b10);font-weight:700;border:1px solid var(--n3);}
+
+/* ---- Right rail (the view family) · compact, floating, sized to its contents ---- */
+.spine{position:absolute;top:52%;right:16px;transform:translateY(-50%);width:96px;height:252px;background:#fff;border:1px solid var(--n2);border-radius:var(--r-lg);box-shadow:var(--sh-2);z-index:25;overflow:hidden;transition:width var(--t-base) var(--ease),height var(--t-base) var(--ease),box-shadow var(--t-base) var(--ease);}
+.spine-tabs{position:absolute;right:0;top:0;bottom:0;width:96px;display:flex;flex-direction:column;align-items:center;padding:10px;gap:6px;}
+.spine-content{position:absolute;left:0;top:0;bottom:0;right:96px;overflow-y:auto;overflow-x:hidden;opacity:0;transition:opacity var(--t-fast) var(--ease);}
+.spine-inner{width:464px;}
+.spine-spacer{flex:1;min-height:6px;}
+/* exactly one rail function active at a time: layers | views | plan */
+.ipad.fn-layers .spine,.ipad.fn-views .spine{width:560px;height:412px;box-shadow:var(--sh-3);}
+.ipad.fn-layers.stale-open .spine{height:576px;}
+.ipad.fn-layers .spine-content,.ipad.fn-views .spine-content{opacity:1;}
+.ipad.fn-layers .spine-tabs,.ipad.fn-views .spine-tabs{border-left:1px solid var(--n2);}
+.lp-layers,.lp-views{display:none;}
+.ipad.fn-layers .lp-layers{display:block;}
+.ipad.fn-views .lp-views{display:block;}
+.spine-tab{width:76px;height:70px;border:none;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:var(--r-md);position:relative;color:var(--n7);transition:background var(--t-fast) var(--ease);}
+.spine-tab svg{width:30px;height:30px;}
+.spine-tab .lab{font-size:var(--b11);color:var(--n6);font-weight:700;}
+.spine-tab:hover{background:var(--n1);}
+.spine-tab.on{background:var(--red7);color:var(--red);} .spine-tab.on .lab{color:var(--red);}
+.spine-tab .badge{position:absolute;top:8px;right:15px;width:12px;height:12px;border-radius:50%;border:2px solid #fff;display:none;}
+.spine-tab.pip-orange .badge{display:block;background:var(--orange);box-shadow:0 0 0 3px rgba(243,113,43,.18);}
+.spine-tab.pip-red .badge{display:block;background:var(--err);box-shadow:0 0 0 3px rgba(225,22,28,.18);}
+.spine-div{width:54px;height:1px;background:var(--n2);margin:6px 0;}
+
+/* ---- Model viewport (full width; the rail floats over it) ---- */
+.viewport{position:absolute;top:54px;left:0;right:0;bottom:0;overflow:hidden;background:#111;}
+.viewport img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;}
+.viewport .layer-trans{opacity:0;transition:opacity var(--t-cross) var(--ease);}
+.ipad.xray .viewport .layer-trans{opacity:1;}
+.viewport::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 45% 38%,transparent 62%,rgba(0,0,0,.16) 100%);}
+
+/* ---- + FAB (act) ---- */
+.fab{position:absolute;right:28px;bottom:28px;width:72px;height:72px;border-radius:50%;background:var(--red);border:none;cursor:pointer;display:grid;place-items:center;box-shadow:var(--sh-3);z-index:24;transition:background var(--t-fast) var(--ease),transform var(--t-fast) var(--ease);}
+.fab svg{width:34px;height:34px;color:#fff;}
+.fab:hover{background:var(--red2);} .fab:active{transform:scale(.94);}
+
+/* ---- Update notification (loud once) ---- */
+.notif{position:absolute;top:72px;left:50%;transform:translateX(-50%) translateY(-14px);z-index:28;width:440px;max-width:72%;
+  background:#fff;border:1px solid var(--n2);border-left:5px solid var(--orange);border-radius:var(--r-lg);box-shadow:var(--sh-3);
+  padding:18px 20px;display:flex;gap:15px;opacity:0;pointer-events:none;transition:opacity var(--t-base) var(--ease),transform var(--t-base) var(--ease);}
+.ipad.notif-on .notif{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+.notif .nicon{width:42px;height:42px;border-radius:50%;background:rgba(243,113,43,.14);display:grid;place-items:center;flex:none;}
+.notif .nicon svg{width:24px;height:24px;color:var(--orange);}
+.notif .nbody{flex:1;}
+.notif .ntitle{font-size:var(--b17);font-weight:700;color:var(--black);line-height:1.3;}
+.notif .ntext{font-size:var(--b13);color:var(--n5);margin-top:3px;}
+.notif .nacts{display:flex;gap:10px;margin-top:16px;justify-content:flex-end;}
+.nbtn{font-family:var(--font);font-size:var(--b14);font-weight:700;border-radius:var(--r-md);padding:12px 22px;cursor:pointer;border:none;}
+.nbtn.dismiss{background:#fff;border:1px solid var(--n3);color:var(--n6);}
+.nbtn.dismiss:hover{background:var(--n1);}
+.nbtn.sync{background:var(--red);color:#fff;} .nbtn.sync:hover{background:var(--red2);}
+
+/* ---- Resync working beat ---- */
+.working{position:absolute;top:80px;left:50%;transform:translateX(-50%);z-index:28;background:rgba(24,24,27,.92);color:#fff;
+  font-size:var(--b14);font-weight:700;padding:13px 20px;border-radius:var(--r-pill);display:none;align-items:center;gap:11px;box-shadow:var(--sh-2);}
+.ipad.working-on .working{display:inline-flex;}
+.working .sp{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ---- Layers content (lives inside the expanding rail; InDesign Links model) ---- */
+.lp-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--n2);}
+.lp-title{font-size:var(--b17);font-weight:700;color:var(--black);line-height:1.1;}
+.lp-sub{font-size:var(--b11);color:var(--n5);}
+.lp-close{margin-left:auto;width:40px;height:40px;border-radius:var(--r-md);display:grid;place-items:center;border:none;background:transparent;cursor:pointer;color:var(--n6);}
+.lp-close:hover{background:var(--n1);} .lp-close svg{width:22px;height:22px;}
+.lp-rows{padding:6px 10px;}
+.lp-row{display:flex;align-items:center;gap:12px;padding:9px 8px;border-radius:var(--r-md);}
+.lp-row+.lp-row{border-top:1px solid var(--n1);}
+.lp-name{width:118px;font-size:var(--b13);font-weight:700;color:var(--black);flex:none;line-height:1.15;}
+.lp-name small{display:block;font-size:var(--b10);color:var(--n5);font-weight:400;}
+.lp-spacer{flex:1;}
+.lp-row .tri{transform:scale(.92);transform-origin:left center;}
+.lp-status{cursor:default;}
+.lp-status.tappable{cursor:pointer;}
+.lp-status.tappable:after{content:"";display:inline-block;width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);margin-left:5px;opacity:.7;}
+.lp-wired{font-size:var(--b10);color:var(--n4);padding:4px 14px 14px;border-top:1px solid var(--n1);margin-top:2px;}
+/* stale sub-panel (inline under the behind row) */
+.stale-panel{margin:4px 8px 8px;background:var(--n1);border:1px solid var(--n2);border-left:3px solid var(--orange);border-radius:var(--r-md);padding:15px;display:none;}
+.ipad.stale-open .stale-panel{display:block;}
+.sp-title{font-size:var(--b13);font-weight:700;color:var(--black);margin-bottom:11px;}
+.sp-meta{display:flex;flex-direction:column;gap:8px;}
+.sp-mrow{display:flex;justify-content:space-between;gap:14px;font-size:var(--b13);}
+.sp-mrow span{color:var(--n5);} .sp-mrow b{color:var(--black);font-weight:700;text-align:right;}
+.sp-acts{display:flex;align-items:center;gap:12px;margin-top:15px;}
+.sp-link{font-size:var(--b13);color:var(--blue);font-weight:700;cursor:pointer;}
+.sp-resync{margin-left:auto;background:var(--red);color:#fff;border:none;border-radius:var(--r-md);padding:12px 22px;font-family:var(--font);font-size:var(--b14);font-weight:700;cursor:pointer;}
+.sp-resync:hover{background:var(--red2);}
+.fab .ring{position:absolute;inset:0;border-radius:50%;animation:fpulse 3s var(--ease) infinite;}
+@keyframes fpulse{0%{box-shadow:0 0 0 0 rgba(225,22,28,.35);}70%{box-shadow:0 0 0 16px rgba(225,22,28,0);}100%{box-shadow:0 0 0 0 rgba(225,22,28,0);}}
+
+/* ---- Comment pin (legible across the crossfade) ---- */
+.pin{position:absolute;z-index:18;transform:translate(-50%,-100%);cursor:pointer;}
+.pin .body{width:30px;height:30px;border-radius:50% 50% 50% 0;background:var(--red);transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.45), 0 0 0 1px rgba(0,0,0,.15);}
+.pin .num{position:absolute;top:6px;left:50%;transform:translateX(-50%);color:#fff;font-size:11px;font-weight:700;font-family:var(--font);}
+.pin .synced-badge{position:absolute;top:-4px;right:-6px;width:16px;height:16px;border-radius:50%;background:var(--green);border:2px solid #fff;display:none;place-items:center;}
+.pin .synced-badge svg{width:9px;height:9px;color:#fff;}
+.ipad.obs-synced .pin .synced-badge{display:grid;}
+
+/* ---- View management (Views tab content) ---- */
+.lp-views{padding:0;}
+.vm-save{margin:12px 14px 6px;display:inline-flex;align-items:center;gap:9px;background:var(--red);color:#fff;border:none;border-radius:var(--r-md);padding:12px 18px;font-family:var(--font);font-size:var(--b14);font-weight:700;cursor:pointer;}
+.vm-save svg{width:18px;height:18px;}
+.vm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:8px 14px 16px;}
+.vm-card{border:1px solid var(--n2);border-radius:var(--r-md);overflow:hidden;cursor:pointer;background:#fff;transition:box-shadow var(--t-fast) var(--ease);}
+.vm-card:hover{box-shadow:var(--sh-2);}
+.vm-thumb{height:104px;background:#111;overflow:hidden;}
+.vm-thumb img{width:100%;height:100%;object-fit:cover;}
+.vm-meta{padding:9px 11px;}
+.vm-meta b{display:block;font-size:var(--b13);color:var(--black);font-weight:700;}
+.vm-meta span{font-size:var(--b10);color:var(--n5);}
+
+/* ---- Placement hint ---- */
+.place-hint{position:absolute;top:74px;left:50%;transform:translateX(-50%) translateY(-10px);z-index:27;display:none;align-items:center;gap:10px;
+  background:rgba(24,24,27,.9);color:#fff;font-size:var(--b14);font-weight:700;padding:12px 18px;border-radius:var(--r-pill);box-shadow:var(--sh-2);}
+.place-hint svg{width:18px;height:18px;color:#fff;}
+.ipad.placing .place-hint{display:inline-flex;animation:hintbob 1.6s var(--ease) infinite;}
+.ipad.placing .viewport{cursor:crosshair;}
+@keyframes hintbob{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-4px);}}
+
+/* ---- Observation creation sheet (right-docked, slides over the rail) ---- */
+.obs-panel{position:absolute;top:54px;right:0;bottom:0;width:480px;max-width:46%;background:#fff;border-left:1px solid var(--n2);box-shadow:var(--sh-3);z-index:28;
+  display:flex;flex-direction:column;transform:translateX(100%);transition:transform var(--t-base) var(--ease);}
+.ipad.obs-open .obs-panel{transform:translateX(0);}
+.obs-head{display:flex;align-items:center;padding:16px 18px;border-bottom:1px solid var(--n2);flex:none;}
+.obs-h-title{font-size:var(--b17);font-weight:700;color:var(--black);}
+.obs-close{margin-left:auto;width:42px;height:42px;border-radius:var(--r-md);border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--n6);}
+.obs-close:hover{background:var(--n1);} .obs-close svg{width:22px;height:22px;}
+.obs-body{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:15px;}
+.obs-types{display:flex;gap:8px;}
+.obs-type{flex:1;border:1px solid var(--n3);background:#fff;border-radius:var(--r-md);padding:11px 8px;font-family:var(--font);font-size:var(--b13);font-weight:700;color:var(--n6);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;}
+.obs-type small{font-size:var(--b10);font-weight:400;color:var(--n4);}
+.obs-type.on{background:var(--red7);border-color:var(--red);color:var(--red);}
+.obs-type:disabled{background:var(--n1);color:var(--n4);cursor:default;}
+.obs-field{display:flex;flex-direction:column;gap:6px;}
+.obs-field label{font-size:var(--b11);font-weight:700;color:var(--n6);}
+.obs-field textarea.field{resize:none;font-family:var(--font);line-height:1.5;}
+.obs-attach{display:flex;gap:10px;}
+.att{flex:1;border:1.5px dashed var(--n3);background:var(--n1);border-radius:var(--r-md);padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;color:var(--n6);font-family:var(--font);font-size:var(--b11);font-weight:700;transition:all var(--t-fast) var(--ease);}
+.att svg{width:22px;height:22px;}
+.att:hover{border-color:var(--red4);color:var(--red);}
+.att.filled{border-style:solid;border-color:var(--n2);padding:0;overflow:hidden;background:#111;height:96px;position:relative;}
+.att.filled span{position:absolute;left:0;right:0;bottom:0;background:rgba(24,24,27,.72);color:#fff;font-size:var(--b10);padding:5px 8px;}
+.att.filled svg{display:none;}
+.att .thumb{width:100%;height:100%;object-fit:cover;display:none;}
+.att.filled .thumb{display:block;}
+.obs-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.obs-grid .obs-field:nth-child(2){grid-column:1 / -1;}
+.sel{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:1px solid var(--n3);border-radius:var(--r-md);padding:11px 12px;font-size:var(--b13);color:var(--black);font-weight:700;}
+.sel svg{width:16px;height:16px;color:var(--n5);flex:none;}
+.seg{display:flex;border:1px solid var(--n3);border-radius:var(--r-md);overflow:hidden;}
+.seg button{flex:1;border:none;background:#fff;color:var(--n6);font-family:var(--font);font-size:var(--b11);font-weight:700;padding:10px 4px;cursor:pointer;border-right:1px solid var(--n2);}
+.seg button:last-child{border-right:none;}
+.seg button.on{background:var(--red);color:#fff;}
+.obs-more{display:flex;align-items:center;justify-content:center;gap:7px;background:transparent;border:none;color:var(--n5);font-family:var(--font);font-size:var(--b12,12px);font-size:var(--b13);font-weight:700;cursor:pointer;padding:4px;}
+.obs-more svg{width:15px;height:15px;transition:transform var(--t-fast) var(--ease);}
+.obs-extra{display:none;flex-direction:column;gap:13px;}
+.ipad.obs-more-on .obs-extra{display:flex;}
+.ipad.obs-more-on .obs-more svg{transform:rotate(180deg);}
+.obs-check{display:flex;align-items:center;gap:9px;font-size:var(--b13);color:var(--n6);}
+.obs-foot{flex:none;display:flex;gap:12px;padding:14px 18px;border-top:1px solid var(--n2);}
+.obs-foot .btn{flex:1;justify-content:center;}
+/* sync + done toasts */
+.obs-sync{position:absolute;top:80px;left:50%;transform:translateX(-50%);z-index:29;background:rgba(24,24,27,.92);color:#fff;font-size:var(--b14);font-weight:700;padding:13px 20px;border-radius:var(--r-pill);display:none;align-items:center;gap:11px;box-shadow:var(--sh-2);}
+.ipad.obs-syncing .obs-sync{display:inline-flex;}
+.obs-sync .sp{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;}
+.obs-done{position:absolute;top:72px;left:50%;transform:translateX(-50%);z-index:29;background:#fff;border:1px solid var(--n2);border-left:4px solid var(--green);border-radius:var(--r-lg);box-shadow:var(--sh-3);padding:14px 16px;display:none;align-items:center;gap:13px;}
+.ipad.obs-synced .obs-done{display:flex;}
+.obs-done .od-badge{width:38px;height:38px;border-radius:50%;background:var(--green);display:grid;place-items:center;flex:none;}
+.obs-done .od-badge svg{width:20px;height:20px;color:#fff;}
+.obs-done b{font-size:var(--b14);color:var(--black);display:block;} .obs-done span{font-size:var(--b11);color:var(--n5);}
+.obs-done .od-link{margin-left:8px;color:var(--blue);font-size:var(--b13);font-weight:700;cursor:pointer;}
+
+/* ---- x-ray clash callout ---- */
+.clash{position:absolute;z-index:17;opacity:0;transition:opacity var(--t-cross) var(--ease) 120ms;pointer-events:none;}
+.ipad.xray .clash{opacity:1;}
+.clash .ringc{width:96px;height:96px;border-radius:50%;border:2px solid var(--blue);box-shadow:0 0 0 4px rgba(13,181,255,.18);}
+.clash .tag2{position:absolute;top:-12px;left:104px;white-space:nowrap;background:rgba(24,24,27,.88);color:#fff;font-size:var(--b11);font-weight:700;padding:8px 13px;border-radius:var(--r-md);backdrop-filter:blur(8px);box-shadow:var(--sh-2);border:1px solid rgba(13,181,255,.5);border-left:3px solid var(--blue);}
+.clash .tag2 b{color:var(--blue);}
+.clash .tag2:before{content:"";position:absolute;left:-12px;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:rgba(24,24,27,.88);}
+
+/* ---- Plan overlay (large navigable plan; same icon toggles) ---- */
+.planview{position:absolute;top:54px;left:0;right:0;bottom:0;background:rgba(20,20,22,.55);backdrop-filter:blur(4px);z-index:23;
+  display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity var(--t-base) var(--ease);}
+.ipad.fn-plan .planview{opacity:1;pointer-events:auto;}
+.planview .pv-head{display:flex;align-items:center;gap:16px;padding:18px 22px;}
+.planview .pv-level{font-size:var(--h23);font-weight:700;color:#fff;letter-spacing:-.01em;}
+.planview .pv-sel{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);color:rgba(255,255,255,.7);font-size:var(--b13);font-weight:700;padding:8px 14px;border-radius:var(--r-pill);border:1px solid rgba(255,255,255,.16);}
+.planview .pv-sel svg{width:16px;height:16px;}
+.planview .pv-soon{font-size:var(--b10);color:rgba(255,255,255,.5);}
+.planview .pv-close{margin-left:auto;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);display:grid;place-items:center;cursor:pointer;}
+.planview .pv-close svg{width:20px;height:20px;color:#fff;}
+.planview .pv-sheet{flex:1;margin:0 22px 22px;background:#fff;border-radius:var(--r-lg);position:relative;overflow:hidden;box-shadow:var(--sh-3);}
+.planview .pv-sheet img{width:100%;height:100%;object-fit:contain;padding:18px;}
+.pv-marker{position:absolute;left:48%;top:27%;transform:translate(-50%,-50%);pointer-events:none;}
+.pv-drop{position:absolute;transform:translate(-50%,-50%);display:none;pointer-events:none;}
+.ipad.dropping .pv-drop{display:block;}
+/* view cone: apex sits exactly on the you-are-here dot centre, fanning out in the facing direction */
+.pv-marker .cone,.pv-drop .cone{position:absolute;left:calc(50% - 30px);top:50%;width:0;height:0;border-left:30px solid transparent;border-right:30px solid transparent;border-bottom:58px solid rgba(225,22,28,.26);transform-origin:50% 0;filter:drop-shadow(0 0 4px rgba(225,22,28,.32));}
+.pv-marker .cone{transform:rotate(30deg);} /* you-are-here faces down-left, per the marked direction */
+.pv-drop .dot{position:absolute;left:50%;top:50%;width:18px;height:18px;border-radius:50%;background:var(--red);border:3px solid #fff;transform:translate(-50%,-50%);box-shadow:0 2px 6px rgba(0,0,0,.4);}
+.pv-marker .dot{position:absolute;left:50%;top:50%;width:18px;height:18px;border-radius:50%;background:var(--red);border:3px solid #fff;transform:translate(-50%,-50%);box-shadow:0 2px 6px rgba(0,0,0,.4);}
+.pv-marker .pulse{position:absolute;left:50%;top:50%;width:18px;height:18px;border-radius:50%;transform:translate(-50%,-50%);animation:pulse 2.4s var(--ease) infinite;}
+.pv-here{position:absolute;left:50%;top:34px;transform:translateX(-50%);background:rgba(24,24,27,.88);color:#fff;font-size:var(--b10);font-weight:700;padding:4px 9px;border-radius:var(--r-pill);white-space:nowrap;}
+/* camera-drop interaction */
+.pv-hold{position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid var(--red);transform:translate(-50%,-50%);opacity:0;pointer-events:none;}
+.pv-hold.go{animation:holdgrow .62s var(--ease) forwards;}
+@keyframes holdgrow{0%{opacity:.25;transform:translate(-50%,-50%) scale(.5);}100%{opacity:.95;transform:translate(-50%,-50%) scale(2.6);}}
+.pv-move{position:absolute;transform:translate(-50%,32px);display:none;align-items:center;gap:8px;background:var(--red);color:#fff;border:none;border-radius:var(--r-pill);padding:11px 18px;font-family:var(--font);font-size:var(--b13);font-weight:700;cursor:pointer;box-shadow:var(--sh-2);white-space:nowrap;z-index:6;}
+.pv-move svg{width:17px;height:17px;}
+.ipad.drop-confirm .pv-move{display:inline-flex;}
+.pv-hint{position:absolute;top:72px;left:50%;transform:translateX(-50%);background:rgba(24,24,27,.86);color:#fff;font-size:var(--b13);font-weight:700;padding:9px 16px;border-radius:var(--r-pill);z-index:6;display:flex;align-items:center;gap:9px;}
+.pv-hint svg{width:16px;height:16px;color:#fff;}
+.ipad.fn-plan.dropping .pv-here{opacity:.5;}
+/* arrival push when moving to a location */
+.ipad.arriving .viewport{animation:arrive .5s var(--ease);}
+@keyframes arrive{0%{transform:scale(1.09);opacity:.35;}100%{transform:scale(1);opacity:1;}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(225,22,28,.45);}70%{box-shadow:0 0 0 18px rgba(225,22,28,0);}100%{box-shadow:0 0 0 0 rgba(225,22,28,0);}}
+
+/* board live controls */
+.stage-ctrls{display:flex;align-items:center;gap:14px;margin-top:24px;flex-wrap:wrap;}
+.stage-ctrls .lbl{font-size:var(--b11);text-transform:uppercase;letter-spacing:.1em;color:var(--n5);font-weight:700;}
+.toggle-btn{font-family:var(--font);font-size:var(--b13);font-weight:700;border:1px solid #2f2f34;background:#1a1a1d;color:var(--n2);border-radius:var(--r-pill);padding:9px 18px;cursor:pointer;transition:all var(--t-fast) var(--ease);display:inline-flex;align-items:center;gap:8px;}
+.toggle-btn:hover{border-color:var(--red);color:#fff;} .toggle-btn.active{background:var(--red);border-color:var(--red);color:#fff;}
+.toggle-btn svg{width:16px;height:16px;}
+.readout{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2px 30px;margin-top:18px;}
+.readout li{font-size:var(--b13);color:var(--n4);padding:7px 0;border-bottom:1px solid #1f1f23;display:flex;justify-content:space-between;gap:14px;}
+.readout li b{color:var(--n2);font-weight:700;font-variant-numeric:tabular-nums;}
+.legend{display:flex;gap:22px;flex-wrap:wrap;margin-top:18px;}
+.legend .item{display:flex;align-items:center;gap:9px;font-size:var(--b11);color:var(--n5);}
+.legend .item i{width:12px;height:12px;border-radius:3px;display:block;}
+footer{margin-top:120px;border-top:1px solid #26262a;padding-top:30px;font-size:var(--b11);color:var(--n6);}
+/* ===== BOOTH LAUNCH OVERRIDES (laptop) ===== */
+#stageWrap{position:fixed;left:0;top:0;bottom:0;right:208px;background:#0c0c0e;overflow:hidden;}
+#stageWrap .ipad{position:absolute;top:50%;left:50%;transform-origin:center center;} /* keeps base rounded corners + bezel */
+/* presenter rail (right side) — laptop presenter controls, outside the device */
+.pz-rail{position:fixed;right:0;top:0;bottom:0;width:208px;background:#0b0b0d;border-left:1px solid #1d1d20;display:flex;flex-direction:column;justify-content:center;gap:11px;padding:22px 18px;z-index:200;}
+.pz-cap{position:absolute;top:18px;left:20px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5a5a60;font-family:var(--font);}
+.pz-act{display:flex;align-items:center;gap:10px;width:100%;background:#fff;border:none;border-radius:10px;padding:12px 13px;font-family:var(--font);font-size:13px;font-weight:700;color:var(--black);cursor:pointer;text-align:left;transition:.12s;}
+.pz-act:hover{background:var(--n1);}
+.pz-act svg{width:17px;height:17px;color:var(--n5);flex:none;}
+.pz-act.prime{background:var(--red);color:#fff;}
+.pz-act.prime svg{color:#fff;}
+.pz-act.prime:hover{background:#b5161c;}
+.pz-export{margin-top:4px;background:none;border:none;color:#8a8a90;font-family:var(--font);font-size:11px;font-weight:600;cursor:pointer;text-align:center;padding:6px;}
+.pz-export:hover{color:#fff;}
+/* feedback modal */
+.fbm{position:fixed;inset:0;z-index:210;background:rgba(20,20,22,.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;}
+.fbm.show{display:flex;}
+.fbm-card{width:470px;max-width:92vw;max-height:92vh;overflow:auto;background:#fff;border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.5);padding:24px;font-family:var(--font);color:var(--black);}
+.fbm-h{display:flex;align-items:center;justify-content:space-between;}
+.fbm-h .t{font-size:20px;font-weight:700;}
+.fbm-h button{border:none;background:var(--n1);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px;color:var(--n6);}
+.fbm-sub{font-size:13px;color:var(--n5);margin-top:2px;}
+.fb-q{margin:18px 0 8px;font-size:14px;font-weight:700;color:var(--n7);}
+.fb-q .opt{color:var(--n5);font-weight:400;font-size:12px;}
+.fb-chips{display:flex;gap:7px;flex-wrap:wrap;}
+.fb-chips button{font-family:var(--font);font-size:12px;font-weight:700;color:var(--n6);background:var(--n1);border:1px solid var(--n3);border-radius:999px;padding:8px 14px;cursor:pointer;}
+.fb-chips button:hover{border-color:var(--red);}
+.fb-chips button.on{background:var(--red);border-color:var(--red);color:#fff;}
+.fb-stars{display:flex;gap:8px;}
+.fb-star{font-size:32px;line-height:1;color:var(--n3);cursor:pointer;transition:color .1s;}
+.fb-star.on,.fb-star:hover{color:var(--orange);}
+.fb-ta{width:100%;min-height:70px;border:1px solid var(--n3);border-radius:8px;padding:10px;font-family:var(--font);font-size:14px;resize:vertical;}
+.fb-in{width:100%;height:38px;border:1px solid var(--n3);border-radius:8px;padding:0 12px;font-family:var(--font);font-size:14px;}
+.fb-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;}
+.fb-foot button{font-family:var(--font);font-size:14px;font-weight:700;border-radius:999px;padding:11px 22px;cursor:pointer;border:none;}
+.fb-foot .ghost{background:#fff;border:1px solid var(--n3);color:var(--n6);}
+.fb-foot .send{background:var(--red);color:#fff;}
+.fb-note{font-size:11px;color:var(--n5);margin-top:12px;text-align:center;}
+.fb-thanks{text-align:center;padding:28px 10px 12px;display:none;}
+.fb-thanks.show{display:block;}
+.fb-thanks .ok{width:54px;height:54px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:30px;margin:0 auto 16px;}
+.fb-thanks .big{font-size:20px;font-weight:700;}
+.fb-body.hide{display:none;}
+</style>
+</head>
+<body>
+<div id="stageWrap">
+      <div class="ipad" id="ipad-hero">
+        <div class="topbar">
+          <div class="mark"><svg viewBox="0 0 40 40" class="chaos-logo-svg"></svg></div>
+          <div class="titles"><span class="t1">Riverside Mixed-Use</span><span class="t2">Level 3 · Coordination</span></div>
+          <div class="right">
+            <span class="conn"><span class="d"></span>Connected</span>
+            <button class="iconbtn"><svg class="i-more"></svg></button>
+            <span class="av">NM</span>
+          </div>
+        </div>
+
+        <div class="viewport">
+          <img class="layer-solid" src="Interior.png" alt="Location view, all layers solid">
+          <img class="layer-trans" src="Interior_Transparent.png" alt="Location view, architectural layer translucent">
+          <div class="clash" style="left:50%;top:30%"><div class="ringc"></div>
+            <div class="tag2"><b>Revealed:</b> duct behind the soffit clashes with the beam</div></div>
+          <div class="pin" id="heroPin" style="left:52%;top:40%"><div class="body"></div><span class="num">14</span>
+            <div class="synced-badge"><svg class="i-check"></svg></div></div>
+        </div>
+
+        <!-- Plan overlay (opened by the spine Plan tab) -->
+        <div class="planview">
+          <div class="pv-head">
+            <span class="pv-level">Level 3</span>
+            <span class="pv-sel"><svg class="i-chevdown"></svg>Levels</span>
+            <span class="pv-soon">one level in this demo</span>
+            <div class="pv-close" id="pvClose"><svg class="i-close"></svg></div>
+          </div>
+          <div class="pv-hint" id="pvHint"><svg class="i-direction"></svg>Press &amp; hold the plan to drop a camera</div>
+          <div class="pv-sheet" id="pvSheet">
+            <img src="plan.png" alt="Level 3 plan">
+            <div class="pv-marker"><div class="cone"></div><div class="pulse"></div><div class="dot"></div><div class="pv-here">You are here</div></div>
+            <div class="pv-hold" id="pvHold"></div>
+            <div class="pv-drop" id="pvDrop"><div class="cone"></div><div class="dot"></div></div>
+            <button class="pv-move" id="pvMove">Move here<svg class="i-direction"></svg></button>
+          </div>
+        </div>
+
+        <!-- Update notification (loud once) + resync working beat -->
+        <div class="notif">
+          <div class="nicon"><svg class="i-cloud"></svg></div>
+          <div class="nbody">
+            <div class="ntitle">New Electrical model detected</div>
+            <div class="ntext">Revision 4 was published to Procore.</div>
+            <div class="nacts"><button class="nbtn dismiss" id="nDismiss">Dismiss</button><button class="nbtn sync" id="nSync">Sync now</button></div>
+          </div>
+        </div>
+        <div class="working"><span class="sp"></span>Resyncing Electrical…</div>
+
+        <!-- Rail expands in place to encapsulate the Layers content; tabs stay on the edge -->
+        <div class="spine">
+          <div class="spine-content"><div class="spine-inner">
+            <div class="lp-layers">
+            <div class="lp-head">
+              <div><div class="lp-title">Layers</div><div class="lp-sub">5 models · Riverside L3</div></div>
+              <button class="lp-close"><svg class="i-close"></svg></button>
+            </div>
+            <div class="lp-rows">
+              <div class="lp-row">
+                <div class="lp-name">Architectural</div>
+                <div class="tri lp-tri" id="archTri">
+                  <button class="on solid" data-st="solid"><svg class="i-eye"></svg></button>
+                  <button data-st="xray"><svg class="i-trans"></svg></button>
+                  <button data-st="hidden"><svg class="i-eyeoff"></svg></button>
+                </div>
+                <div class="lp-spacer"></div>
+                <span class="status current"><span class="dot"></span>Current</span>
+              </div>
+              <div class="lp-row">
+                <div class="lp-name">Structural</div>
+                <div class="tri lp-tri"><button class="on solid" data-st="solid"><svg class="i-eye"></svg></button><button data-st="xray"><svg class="i-trans"></svg></button><button data-st="hidden"><svg class="i-eyeoff"></svg></button></div>
+                <div class="lp-spacer"></div>
+                <span class="status current"><span class="dot"></span>Current</span>
+              </div>
+              <div class="lp-row">
+                <div class="lp-name">Mechanical<small>HVAC</small></div>
+                <div class="tri lp-tri"><button class="on solid" data-st="solid"><svg class="i-eye"></svg></button><button data-st="xray"><svg class="i-trans"></svg></button><button data-st="hidden"><svg class="i-eyeoff"></svg></button></div>
+                <div class="lp-spacer"></div>
+                <span class="status current"><span class="dot"></span>Current</span>
+              </div>
+              <div class="lp-row">
+                <div class="lp-name">Electrical</div>
+                <div class="tri lp-tri"><button class="on solid" data-st="solid"><svg class="i-eye"></svg></button><button data-st="xray"><svg class="i-trans"></svg></button><button data-st="hidden"><svg class="i-eyeoff"></svg></button></div>
+                <div class="lp-spacer"></div>
+                <span class="status current" id="elecStatus"><span class="dot"></span>Current</span>
+              </div>
+              <div class="stale-panel">
+                <div class="sp-title">Electrical · Update available</div>
+                <div class="sp-meta">
+                  <div class="sp-mrow"><span>Revision</span><b>4</b></div>
+                  <div class="sp-mrow"><span>Published</span><b>Today, 1:42 PM</b></div>
+                  <div class="sp-mrow"><span>Notes</span><b>Revised east-wing lighting circuits.</b></div>
+                </div>
+                <div class="sp-acts"><span class="sp-link">View in Procore</span><button class="sp-resync" id="spResync">Resync</button></div>
+              </div>
+              <div class="lp-row">
+                <div class="lp-name">Plumbing</div>
+                <div class="tri lp-tri"><button class="on solid" data-st="solid"><svg class="i-eye"></svg></button><button data-st="xray"><svg class="i-trans"></svg></button><button data-st="hidden"><svg class="i-eyeoff"></svg></button></div>
+                <div class="lp-spacer"></div>
+                <span class="status current"><span class="dot"></span>Current</span>
+              </div>
+            </div>
+            <div class="lp-wired">Only Architectural is wired to a render in this prototype.</div>
+            </div><!-- /lp-layers -->
+            <div class="lp-views">
+              <div class="lp-head">
+                <div><div class="lp-title">Views</div><div class="lp-sub">saved viewpoints</div></div>
+                <button class="lp-close"><svg class="i-close"></svg></button>
+              </div>
+              <button class="vm-save"><svg class="i-bookmark"></svg>Save current view</button>
+              <div class="vm-grid">
+                <div class="vm-card"><div class="vm-thumb"><img src="Interior.png" alt=""></div><div class="vm-meta"><b>View 1</b><span>All solid · 2 min ago</span></div></div>
+                <div class="vm-card"><div class="vm-thumb"><img src="Interior_Transparent.png" alt=""></div><div class="vm-meta"><b>View 2</b><span>Arch X-ray · just now</span></div></div>
+              </div>
+            </div>
+          </div></div>
+          <div class="spine-tabs">
+            <button class="spine-tab" id="railLayers"><span class="badge"></span><svg class="i-layers"></svg><span class="lab">Layers</span></button>
+            <button class="spine-tab" id="railViews"><svg class="i-bookmark"></svg><span class="lab">Views</span></button>
+            <div class="spine-spacer"></div>
+            <div class="spine-div"></div>
+            <button class="spine-tab" id="railPlan"><svg class="i-map"></svg><span class="lab">Plan</span></button>
+          </div>
+        </div>
+
+        <!-- placement hint + observation creation sheet (off the +) -->
+        <div class="place-hint"><svg class="i-plusbare"></svg>Tap the view to place your observation</div>
+        <div class="obs-panel">
+          <div class="obs-head"><div class="obs-h-title">New observation</div><button class="obs-close" id="obsClose"><svg class="i-close"></svg></button></div>
+          <div class="obs-body">
+            <div class="obs-types">
+              <button class="obs-type on">Observation</button>
+              <button class="obs-type" disabled>RFI<small>in Procore</small></button>
+              <button class="obs-type" disabled>Drawing<small>in Procore</small></button>
+            </div>
+            <div class="obs-field"><label>Title</label><input class="field" value="Duct / beam clash at Level 3 soffit"></div>
+            <div class="obs-field"><label>Description</label><textarea class="field" rows="2" placeholder="Describe the issue">Supply duct conflicts with the structural beam above the kitchenette soffit. Needs coordination before rough-in.</textarea></div>
+            <div class="obs-field"><label>Attachments</label>
+              <div class="obs-attach">
+                <button class="att" id="attPhoto"><svg class="i-image"></svg><span>Add photo</span></button>
+                <button class="att" id="attPersp"><svg class="i-direction"></svg><span>Attach current view</span></button>
+              </div>
+            </div>
+            <div class="obs-grid">
+              <div class="obs-field"><label>Type</label><div class="sel">Work to be done<svg class="i-chevdown"></svg></div></div>
+              <div class="obs-field"><label>Priority</label>
+                <div class="seg pri"><button>Low</button><button class="on">Medium</button><button>High</button><button>Urgent</button></div>
+              </div>
+              <div class="obs-field"><label>Assignee</label><div class="sel">Mechanical sub<svg class="i-chevdown"></svg></div></div>
+              <div class="obs-field"><label>Due date</label><div class="sel">Jun 11, 2026<svg class="i-chevdown"></svg></div></div>
+              <div class="obs-field"><label>Location</label><div class="sel">Level 3 · West bay<svg class="i-chevdown"></svg></div></div>
+              <div class="obs-field"><label>Trade</label><div class="sel">Mechanical (HVAC)<svg class="i-chevdown"></svg></div></div>
+            </div>
+            <button class="obs-more" id="obsMore">More Procore fields<svg class="i-chevdown"></svg></button>
+            <div class="obs-extra">
+              <div class="obs-field"><label>Status</label><div class="sel">Initiated<svg class="i-chevdown"></svg></div></div>
+              <div class="obs-field"><label>Spec section</label><div class="sel">23 00 00 · HVAC<svg class="i-chevdown"></svg></div></div>
+              <div class="obs-field"><label>Distribution</label><div class="sel">2 people<svg class="i-chevdown"></svg></div></div>
+              <label class="obs-check"><input type="checkbox">Private (Admins, assignee &amp; distribution only)</label>
+            </div>
+          </div>
+          <div class="obs-foot">
+            <button class="btn btn-ghost" id="obsCancel">Cancel</button>
+            <button class="btn btn-primary" id="obsCreate"><svg class="i-plus"></svg>Create observation</button>
+          </div>
+        </div>
+        <div class="obs-sync"><span class="sp"></span>Syncing to Procore…</div>
+        <div class="obs-done"><div class="od-badge"><svg class="i-check"></svg></div><div><b>Observation #14 created in Procore</b><span>Synced · assigned to Mechanical sub</span></div><span class="od-link">View in Procore</span></div>
+
+        <button class="fab"><span class="ring"></span><svg class="i-plusbare"></svg></button>
+      </div>
+</div>
+<!-- presenter rail (right side) -->
+<div class="pz-rail">
+  <span class="pz-cap">Presenter</span>
+  <button class="pz-act prime" id="pzUpdate"><svg viewBox="0 0 24 24"><use href="#g-cloud"/></svg>Simulate model update</button>
+  <button class="pz-act" id="pzFeedback"><svg viewBox="0 0 24 24"><use href="#g-bubble"/></svg>Share feedback</button>
+  <button class="pz-act" id="pzReset"><svg viewBox="0 0 24 24"><use href="#g-close"/></svg>Reset demo</button>
+  <button class="pz-export" id="pzExport">Export feedback CSV</button>
+</div>
+<!-- feedback survey -->
+<div class="fbm" id="fbm">
+  <div class="fbm-card">
+    <div class="fb-body" id="fbBody">
+      <div class="fbm-h"><span class="t">Share your feedback</span><button id="fbX">&times;</button></div>
+      <div class="fbm-sub">Enscape On-Site &middot; AIA 2026. About 20 seconds.</div>
+      <div class="fb-q">Your role</div>
+      <div class="fb-chips" id="fbRole">
+        <button data-v="Architect">Architect</button><button data-v="Contractor / CM">Contractor / CM</button>
+        <button data-v="Engineer">Engineer</button><button data-v="Owner / PM">Owner / PM</button><button data-v="Other">Other</button>
+      </div>
+      <div class="fb-q">How useful is this for on-site coordination? <span class="opt">(1&ndash;5)</span></div>
+      <div class="fb-stars" id="fbStars"><span class="fb-star" data-v="1">&#9733;</span><span class="fb-star" data-v="2">&#9733;</span><span class="fb-star" data-v="3">&#9733;</span><span class="fb-star" data-v="4">&#9733;</span><span class="fb-star" data-v="5">&#9733;</span></div>
+      <div class="fb-q">Would you use this on a project?</div>
+      <div class="fb-chips" id="fbLikely">
+        <button data-v="Not likely">Not likely</button><button data-v="Maybe">Maybe</button>
+        <button data-v="Likely">Likely</button><button data-v="Definitely">Definitely</button>
+      </div>
+      <div class="fb-q">Comments <span class="opt">(optional)</span></div>
+      <textarea class="fb-ta" id="fbComment" placeholder="What worked, what is missing, what you would want..."></textarea>
+      <div class="fb-q">Email <span class="opt">(optional, for follow-up)</span></div>
+      <input class="fb-in" id="fbEmail" type="email" placeholder="you@firm.com">
+      <div class="fb-foot"><button class="ghost" id="fbCancel">Cancel</button><button class="send" id="fbSend">Submit</button></div>
+      <div class="fb-note">Saved on this device, then synced to the team sheet.</div>
+    </div>
+    <div class="fb-thanks" id="fbThanks"><div class="ok">&#10003;</div><div class="big">Thank you</div><div class="fbm-sub" style="margin-top:6px">Your feedback was recorded.</div></div>
+  </div>
+</div>
+<svg style="display:none" id="svgdefs"><defs>
+  <g id="g-layers"><path d="M2 17L12 22L22 17M2 12L12 17L22 12M12 2L2 7L12 12L22 7L12 2Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <!-- g-map: exact canonical "H map" geometry (folded map) -->
+  <g id="g-map"><path d="M8.6658 3V19M8.6658 3L2 5V21L8.6658 19M8.6658 3L15.334 5.66666M8.6658 19L15.334 21.6667M15.334 5.66666V21.6667M15.334 5.66666L22 3.66667V19.6667L15.334 21.6667" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <!-- g-bookmark: reconstructed (Views / saved viewpoints). Glyph pending §4 pick. -->
+  <g id="g-bookmark"><path d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4.2L5 21V4.5a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="g-plus"><path d="M12 7V17M7 12H17M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="g-plusbare"><path d="M12 5V19M5 12H19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <!-- g-eye: reconstructed (set ships "Eye on" as PNG only) -->
+  <g id="g-eye"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/></g>
+  <g id="g-eyeoff"><path d="M10.0909 5.21002C10.7167 5.06904 11.3573 4.99857 12 5.00002C18.3636 5.00002 22 12 22 12C21.4482 12.9937 20.7901 13.9292 20.0364 14.7913M13.9273 13.855C13.6776 14.1129 13.3765 14.3198 13.042 14.4632C12.7074 14.6067 12.3463 14.6839 11.9801 14.6901C11.6139 14.6963 11.2501 14.6315 10.9106 14.4994C10.571 14.3674 10.2625 14.1709 10.0035 13.9216C9.74452 13.6724 9.54036 13.3755 9.40319 13.0486C9.26602 12.7217 9.19866 12.3716 9.20512 12.0192C9.21158 11.6667 9.29174 11.3191 9.4408 10.9971C9.58986 10.6751 9.80478 10.3853 10.0727 10.145M2 2L22 22M17.4 17.1975C15.846 18.3376 13.9537 18.9693 12 19C5.63636 19 2 12 2 12C3.13081 9.97167 4.69921 8.19955 6.6 6.80252L17.4 17.1975Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <!-- g-trans: reconstructed opacity glyph -->
+  <g id="g-trans"><rect x="3.5" y="3.5" width="17" height="17" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 3.5v17" stroke="currentColor" stroke-width="1.5"/><path d="M12 4.5h7a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-7Z" fill="currentColor" opacity=".32"/></g>
+  <g id="g-attention"><path d="M11.998 8.32285V13.7783M12 17H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="g-close"><path d="M8.46484 8.46448L15.5359 15.5355M8.46484 15.5355L15.5359 8.46445M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="g-check"><path d="M20 6L9 17L4 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="g-info"><path d="M10 10H12.1818V17M12.1818 17H10M12.1818 17H14M12 7H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="g-cloud"><path d="M18.5957 18.6109C20.4615 18.6109 22 17.0724 22 15.2066C22 13.439 20.6252 11.966 18.8903 11.8351C18.9231 11.5732 18.9558 11.2786 18.9558 10.9513C18.9558 7.87438 16.4681 5.38666 13.3912 5.38666C10.5434 5.38666 8.25205 7.48158 7.89198 10.2312C7.40098 10.0348 6.87725 9.93657 6.32079 9.93657C3.93126 9.93657 2 11.8678 2 14.2574C2 16.6469 3.93126 18.5781 6.32079 18.5781C6.32079 18.6109 18.5957 18.6109 18.5957 18.6109Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="g-more"><circle cx="12" cy="5" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="19" r="1.4" fill="currentColor"/></g>
+  <g id="g-image"><path d="M21 15L16 10L5 21M3.00004 3H21.0001L21.0001 21H3.00034C2.9998 15 3.00007 9 3.00004 3ZM10 8.5C10 9.32843 9.32843 10 8.5 10C7.67157 10 7 9.32843 7 8.5C7 7.67157 7.67157 7 8.5 7C9.32843 7 10 7.67157 10 8.5Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="g-bubble"><path d="M4.36364 16.3637C2.90909 14.9091 2 13.0909 2 11.0909C2 6.54548 6.45455 2.90912 12 2.90912C17.5455 2.90912 22 6.54548 22 11.0909C22 15.6364 17.5455 19.2728 12 19.2728C11 19.2728 10.0909 19.1818 9.18182 18.9091L3.81818 21.0909L4.36364 16.3637Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="g-direction"><path d="M3 3L10.4991 21L13.1615 13.1615L21 10.4991L3 3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="g-chevdown"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="g-chaos"><path d="M0 40H40V0H0V40Z" fill="#E1161C"/><path d="M22.7604 27.8797C22.2804 27.8797 18.3604 27.7597 16.0404 24.5997C14.8404 22.9597 14.6404 21.2397 14.5604 20.3997C14.5604 20.3197 14.5604 19.9597 14.8404 19.6397C15.1204 19.3197 15.5204 19.2797 15.6004 19.2797H16.6804C17.5604 19.2797 18.4004 19.8397 18.6804 20.6797C19.2404 22.3597 20.8404 23.5997 22.7604 23.5997H32.6404C32.9604 22.4397 33.1204 21.2797 33.1204 20.0397C33.1204 12.6397 27.1204 6.67969 19.7604 6.67969C12.4004 6.67969 11.6004 8.71969 9.16039 11.8797H16.8404C17.3204 11.8797 21.2404 11.9997 23.5604 15.1597C24.7604 16.7997 24.9604 18.5197 25.0404 19.3597C25.0404 19.4397 25.0404 19.7997 24.7604 20.1197C24.4804 20.4397 24.0804 20.4797 24.0004 20.4797H22.9204C22.0404 20.4797 21.2004 19.9197 20.9204 19.0797C20.3604 17.3997 18.7604 16.1597 16.8404 16.1597H6.96039C6.60039 17.3997 6.40039 18.6797 6.40039 19.9997C6.40039 27.3997 12.4004 33.3597 19.7604 33.3597C27.1204 33.3597 28.1204 31.1997 30.5604 27.8397H22.7604V27.8797Z" fill="white"/></g>
+</defs></svg>
+<script>
+const MAP={'i-layers':'g-layers','i-map':'g-map','i-bookmark':'g-bookmark','i-plus':'g-plus','i-plusbare':'g-plusbare',
+'i-eye':'g-eye','i-eyeoff':'g-eyeoff','i-trans':'g-trans','i-attention':'g-attention','i-close':'g-close','i-check':'g-check',
+'i-info':'g-info','i-cloud':'g-cloud','i-more':'g-more','i-image':'g-image','i-bubble':'g-bubble','i-direction':'g-direction','i-chevdown':'g-chevdown'};
+function paint(svg,id){svg.setAttribute('viewBox','0 0 24 24');svg.innerHTML='<use href="#'+id+'"/>';}
+document.querySelectorAll('svg[class]').forEach(svg=>{for(const c of svg.classList){if(MAP[c]){paint(svg,MAP[c]);break;}}});
+document.querySelectorAll('svg.chaos-logo-svg').forEach(svg=>{svg.setAttribute('viewBox','0 0 40 40');svg.innerHTML='<use href="#g-chaos"/>';});
+/* ---- booth: framed fit + neutralized board controls ---- */
+const hero=document.getElementById('ipad-hero');
+function fitBooth(){const w=document.getElementById('stageWrap');const s=Math.min((w.clientWidth-44)/1366,(w.clientHeight-44)/1024);hero.style.transform='translate(-50%,-50%) scale('+s+')';}
+window.addEventListener('resize',fitBooth);window.addEventListener('load',fitBooth);fitBooth();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitBooth);
+const _noop=()=>{};const mkStub=()=>({classList:{add:_noop,remove:_noop,toggle:_noop,contains:()=>false},addEventListener:_noop,set onclick(v){},set textContent(v){}});
+const bS=mkStub(),bT=mkStub(),bLayers=mkStub(),bViews=mkStub(),bPlan=mkStub(),bUpdate=mkStub(),bObs=mkStub();
+const pin=document.getElementById('heroPin'),viewport=hero.querySelector('.viewport'),fab=hero.querySelector('.fab');
+const railLayers=document.getElementById('railLayers'),railViews=document.getElementById('railViews'),railPlan=document.getElementById('railPlan');
+const archTri=document.getElementById('archTri'),elecStatus=document.getElementById('elecStatus'),spResync=document.getElementById('spResync');
+const nDismiss=document.getElementById('nDismiss'),nSync=document.getElementById('nSync');
+const obsClose=document.getElementById('obsClose'),obsCancel=document.getElementById('obsCancel'),obsCreate=document.getElementById('obsCreate'),obsMore=document.getElementById('obsMore'),attPhoto=document.getElementById('attPhoto'),attPersp=document.getElementById('attPersp');
+
+/* ---- one rail function active at a time ---- */
+let railFn=null;
+function applyFn(){hero.classList.remove('fn-layers','fn-views','fn-plan');if(railFn)hero.classList.add('fn-'+railFn);
+  railLayers.classList.toggle('on',railFn==='layers');railViews.classList.toggle('on',railFn==='views');railPlan.classList.toggle('on',railFn==='plan');
+  bLayers.classList.toggle('active',railFn==='layers');bViews.classList.toggle('active',railFn==='views');bPlan.classList.toggle('active',railFn==='plan');
+  if(railFn!=='plan'&&typeof resetDrop==='function')resetDrop();}
+function setFn(fn){railFn=fn;applyFn();}
+function toggleFn(fn){railFn=(railFn===fn)?null:fn;applyFn();}
+
+function setXray(on){hero.classList.toggle('xray',on);bS.classList.toggle('active',!on);bT.classList.toggle('active',on);
+  archTri.querySelectorAll('button').forEach(b=>b.classList.remove('on','solid','trans'));
+  const seg=on?archTri.querySelector('[data-st=xray]'):archTri.querySelector('[data-st=solid]');
+  seg.classList.add('on');seg.classList.add(on?'trans':'solid');}
+function setBehind(on){hero.classList.toggle('elec-behind',on);railLayers.classList.toggle('pip-orange',on);
+  if(on){elecStatus.className='status behind tappable';elecStatus.innerHTML='<span class="dot"></span>Behind';}
+  else{elecStatus.className='status current';elecStatus.innerHTML='<span class="dot"></span>Current';hero.classList.remove('stale-open');}}
+function doResync(){hero.classList.remove('notif-on');hero.classList.add('working-on');
+  setTimeout(()=>{hero.classList.remove('working-on');setBehind(false);bUpdate.classList.remove('active');bUpdate.textContent='Simulate update';},1300);}
+function fireUpdate(){hero.classList.add('notif-on');bUpdate.classList.add('active');bUpdate.textContent='Reset';}
+function resetUpdate(){hero.classList.remove('notif-on','working-on');setBehind(false);bUpdate.classList.remove('active');bUpdate.textContent='Simulate update';}
+
+/* ---- observation flow: place → fields → sync → synced ---- */
+function startPlacing(){setFn(null);hero.classList.remove('obs-open','obs-syncing','obs-synced','obs-more-on');hero.classList.add('placing');bObs.classList.add('active');}
+function placePinAt(xp,yp){pin.style.left=xp+'%';pin.style.top=yp+'%';pin.style.display='';}
+function openObs(){hero.classList.remove('placing');setFn(null);hero.classList.add('obs-open');}
+function resetObs(){hero.classList.remove('placing','obs-open','obs-syncing','obs-synced');pin.style.display='none';bObs.classList.remove('active');}
+function createObs(){hero.classList.remove('obs-open');hero.classList.add('obs-syncing');
+  setTimeout(()=>{hero.classList.remove('obs-syncing');hero.classList.add('obs-synced');bObs.classList.remove('active');},1300);}
+function fillAtt(btn,src,label){btn.classList.add('filled');if(!btn.querySelector('.thumb')){const i=document.createElement('img');i.className='thumb';i.src=src;btn.insertBefore(i,btn.firstChild);}btn.querySelector('span').textContent=label;}
+
+/* board controls */
+bS.onclick=()=>setXray(false);bT.onclick=()=>setXray(true);
+bLayers.onclick=()=>toggleFn('layers');bViews.onclick=()=>toggleFn('views');bPlan.onclick=()=>toggleFn('plan');
+bUpdate.onclick=()=>{(hero.classList.contains('notif-on')||hero.classList.contains('working-on')||hero.classList.contains('elec-behind'))?resetUpdate():fireUpdate();};
+bObs.onclick=()=>{(hero.classList.contains('placing')||hero.classList.contains('obs-open')||hero.classList.contains('obs-syncing')||hero.classList.contains('obs-synced'))?resetObs():startPlacing();};
+
+/* rail tabs + closes */
+railLayers.onclick=()=>toggleFn('layers');railViews.onclick=()=>toggleFn('views');railPlan.onclick=()=>toggleFn('plan');
+document.querySelectorAll('#ipad-hero .lp-close, #pvClose').forEach(b=>b.onclick=()=>setFn(null));
+elecStatus.onclick=()=>{if(hero.classList.contains('elec-behind'))hero.classList.toggle('stale-open');};
+spResync.onclick=doResync;
+nDismiss.onclick=()=>{hero.classList.remove('notif-on');setBehind(true);};
+nSync.onclick=doResync;
+
+/* the + and the creation sheet */
+fab.onclick=()=>{hero.classList.contains('obs-synced')?resetObs():startPlacing();};
+viewport.onclick=(e)=>{if(!hero.classList.contains('placing'))return;const r=viewport.getBoundingClientRect();
+  placePinAt(((e.clientX-r.left)/r.width*100).toFixed(1),((e.clientY-r.top)/r.height*100).toFixed(1));openObs();};
+obsClose.onclick=resetObs;obsCancel.onclick=resetObs;obsCreate.onclick=createObs;
+obsMore.onclick=()=>hero.classList.toggle('obs-more-on');
+attPhoto.onclick=()=>fillAtt(attPhoto,'Demo_iPadMockUp.png','Photo attached');
+attPersp.onclick=()=>fillAtt(attPersp, hero.classList.contains('xray')?'Interior_Transparent.png':'Interior.png','Current view');
+
+/* Architectural tri wired to the crossfade; Hidden is visual-only */
+archTri.querySelectorAll('button').forEach(b=>b.onclick=()=>{const st=b.dataset.st;
+  if(st==='xray')setXray(true);else if(st==='solid')setXray(false);
+  else{archTri.querySelectorAll('button').forEach(x=>x.classList.remove('on','solid','trans'));b.classList.add('on');}});
+document.querySelectorAll('.lp-tri').forEach(tri=>{if(tri===archTri)return;
+  tri.querySelectorAll('button').forEach(b=>b.onclick=()=>{tri.querySelectorAll('button').forEach(x=>x.classList.remove('on','solid','trans'));
+    b.classList.add('on');if(b.dataset.st==='xray')b.classList.add('trans');});});
+
+/* ---- plan camera-drop: press-hold to place, tap to aim, Move here to arrive ---- */
+const pvSheet=document.getElementById('pvSheet'),pvHold=document.getElementById('pvHold'),pvDrop=document.getElementById('pvDrop'),pvMove=document.getElementById('pvMove'),pvHint=document.getElementById('pvHint'),pvDropCone=pvDrop.querySelector('.cone');
+const HINT_IDLE='<svg viewBox="0 0 24 24"><use href="#g-direction"/></svg>Press &amp; hold the plan to drop a camera';
+let dropPhase=0,dropXY=null,holdT=null,suppressClick=false;
+function pctFromEvt(e){const r=pvSheet.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100};}
+function resetDrop(){dropPhase=0;dropXY=null;hero.classList.remove('dropping','drop-confirm');pvHold.classList.remove('go');pvHint.innerHTML=HINT_IDLE;}
+function placeCamera(p){dropXY=p;pvDrop.style.left=p.x+'%';pvDrop.style.top=p.y+'%';pvMove.style.left=p.x+'%';pvMove.style.top=p.y+'%';
+  hero.classList.add('dropping');hero.classList.remove('drop-confirm');dropPhase=2;pvHold.classList.remove('go');
+  pvHint.innerHTML='<svg viewBox="0 0 24 24"><use href="#g-direction"/></svg>Tap to set the direction the camera faces';}
+function aimCamera(p){const ang=Math.atan2(p.y-dropXY.y,p.x-dropXY.x)*180/Math.PI-90;pvDropCone.style.transform='rotate('+ang.toFixed(1)+'deg)';
+  dropPhase=3;hero.classList.add('drop-confirm');pvHint.innerHTML='<svg viewBox="0 0 24 24"><use href="#g-direction"/></svg>Camera placed and aimed';}
+pvSheet.addEventListener('pointerdown',e=>{if(dropPhase===2)return;const p=pctFromEvt(e);
+  pvHold.style.left=p.x+'%';pvHold.style.top=p.y+'%';pvHold.classList.remove('go');void pvHold.offsetWidth;pvHold.classList.add('go');
+  holdT=setTimeout(()=>{suppressClick=true;placeCamera(p);},620);});
+function cancelHold(){clearTimeout(holdT);if(dropPhase<2)pvHold.classList.remove('go');}
+pvSheet.addEventListener('pointerup',cancelHold);pvSheet.addEventListener('pointerleave',cancelHold);
+pvSheet.addEventListener('click',e=>{if(suppressClick){suppressClick=false;return;}if(dropPhase===2)aimCamera(pctFromEvt(e));});
+pvMove.onclick=e=>{e.stopPropagation();setFn(null);resetDrop();hero.classList.add('arriving');setTimeout(()=>hero.classList.remove('arriving'),520);};
+pin.style.display='none';
+setFn(null);   /* booth opens on the clean photoreal arrival */
+if(location.hash==='#xray')setXray(true);
+if(location.hash==='#views')setFn('views');
+if(location.hash==='#plan')setFn('plan');
+if(location.hash==='#update')fireUpdate();
+if(location.hash==='#behind')setBehind(true);
+if(location.hash==='#stale'){setBehind(true);hero.classList.add('stale-open');}
+if(location.hash==='#obs'){placePinAt(52,40);openObs();}
+if(location.hash==='#synced'){placePinAt(52,40);hero.classList.add('obs-synced');}
+if(location.hash==='#drop'){setFn('plan');placeCamera({x:62,y:54});aimCamera({x:44,y:72});}
+/* ===== presenter rail + feedback survey (Enscape On-Site) ===== */
+const FEEDBACK_ENDPOINT='https://script.google.com/macros/s/AKfycbwKZxJDnH2wSYrxr6Qs9_XM8p0wyKMDjmXnsAksVMI18EMm-jL75hEAOVBpZiv3JOeJng/exec';
+const DEMO_NAME='Enscape On-Site';
+const FB_KEY='onsite_feedback_v1';
+function clientId(){let id=localStorage.getItem('onsite_cid');if(!id){id='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);localStorage.setItem('onsite_cid',id);}return id;}
+
+const fbm=document.getElementById('fbm'),fbBody=document.getElementById('fbBody'),fbThanks=document.getElementById('fbThanks');
+let fbRole='',fbUseful=0,fbLikely='';
+const fbStars=[...document.querySelectorAll('#fbStars .fb-star')];
+fbStars.forEach(s=>s.onclick=()=>{fbUseful=+s.dataset.v;fbStars.forEach(x=>x.classList.toggle('on',+x.dataset.v<=fbUseful));});
+function chipGroup(id,set){document.querySelectorAll('#'+id+' button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');set(b.dataset.v);});}
+chipGroup('fbRole',v=>fbRole=v);chipGroup('fbLikely',v=>fbLikely=v);
+function openFb(){fbBody.classList.remove('hide');fbThanks.classList.remove('show');fbm.classList.add('show');}
+function closeFb(){fbm.classList.remove('show');}
+document.getElementById('fbX').onclick=closeFb;document.getElementById('fbCancel').onclick=closeFb;
+fbm.addEventListener('click',e=>{if(e.target===fbm)closeFb();});
+document.getElementById('fbSend').onclick=()=>{
+  const rec={ts:new Date().toISOString(),role:fbRole,useful:fbUseful||'',likelihood:fbLikely,comment:document.getElementById('fbComment').value.trim(),email:document.getElementById('fbEmail').value.trim(),demo:DEMO_NAME,id:clientId()};
+  const all=JSON.parse(localStorage.getItem(FB_KEY)||'[]');all.push(rec);localStorage.setItem(FB_KEY,JSON.stringify(all));
+  if(FEEDBACK_ENDPOINT){try{fetch(FEEDBACK_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(rec)});}catch(err){}}
+  fbBody.classList.add('hide');fbThanks.classList.add('show');
+  fbRole='';fbUseful=0;fbLikely='';fbStars.forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('#fbRole button,#fbLikely button').forEach(x=>x.classList.remove('on'));
+  document.getElementById('fbComment').value='';document.getElementById('fbEmail').value='';
+  setTimeout(closeFb,1700);
+};
+function exportCSV(){const all=JSON.parse(localStorage.getItem(FB_KEY)||'[]');
+  const esc=s=>'"'+String(s==null?'':s).replace(/"/g,'""')+'"';
+  const head=['Submitted (ISO)','Role','Useful (1-5)','Likelihood','Comment','Email','Demo','Client ID'].map(esc).join(',');
+  const rows=all.map(r=>[r.ts,r.role,r.useful,r.likelihood,r.comment,r.email,r.demo,r.id].map(esc).join(','));
+  const csv=[head].concat(rows).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='onsite-feedback.csv';a.click();}
+function resetDemo(){resetObs();resetUpdate();resetDrop();setXray(false);setFn(null);hero.classList.remove('stale-open');closeFb();}
+
+/* presenter rail buttons */
+document.getElementById('pzUpdate').onclick=()=>{(hero.classList.contains('notif-on')||hero.classList.contains('working-on')||hero.classList.contains('elec-behind'))?resetUpdate():fireUpdate();};
+document.getElementById('pzFeedback').onclick=openFb;
+document.getElementById('pzReset').onclick=resetDemo;
+document.getElementById('pzExport').onclick=exportCSV;
+
+/* keyboard shortcuts (presenter) */
+document.addEventListener('keydown',e=>{
+  const typing=/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName||'');
+  if((e.key==='F'||e.key==='f')&&e.ctrlKey&&e.shiftKey){e.preventDefault();exportCSV();return;}
+  if(e.shiftKey&&e.key==='Backspace'&&!typing){e.preventDefault();resetDemo();return;}
+  if(typing)return;
+  if(e.key==='u'||e.key==='U')fireUpdate();
+  if(e.key==='f'||e.key==='F')openFb();
+});
+</script>
+</body>
+</html>
