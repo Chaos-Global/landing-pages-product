@@ -309,20 +309,13 @@ body{font-family:var(--font);background:#101012;color:var(--n2);line-height:1.55
 .obs-sync{position:absolute;top:80px;left:50%;transform:translateX(-50%);z-index:29;background:rgba(24,24,27,.92);color:#fff;font-size:var(--b14);font-weight:700;padding:13px 20px;border-radius:var(--r-pill);display:none;align-items:center;gap:11px;box-shadow:var(--sh-2);}
 .ipad.obs-syncing .obs-sync{display:inline-flex;}
 .obs-sync .sp{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;}
-.obs-done{position:absolute;top:72px;left:50%;transform:translateX(-50%);z-index:29;background:#fff;border:1px solid var(--n2);border-left:4px solid var(--green);border-radius:var(--r-lg);box-shadow:var(--sh-3);padding:14px 16px;display:none;align-items:center;gap:13px;}
+.obs-done{position:absolute;top:72px;left:50%;transform:translateX(-50%);z-index:29;background:#fff;border:1px solid var(--n2);border-left:4px solid var(--green);border-radius:var(--r-lg);box-shadow:var(--sh-3);padding:14px 16px;display:none;align-items:center;gap:13px;transition:opacity var(--t-base) var(--ease),transform var(--t-base) var(--ease);}
 .ipad.obs-synced .obs-done{display:flex;}
+.ipad.obs-synced.obs-done-hide .obs-done{opacity:0;transform:translateX(-50%) translateY(-8px);pointer-events:none;}
 .obs-done .od-badge{width:38px;height:38px;border-radius:50%;background:var(--green);display:grid;place-items:center;flex:none;}
 .obs-done .od-badge svg{width:20px;height:20px;color:#fff;}
 .obs-done b{font-size:var(--b14);color:var(--black);display:block;} .obs-done span{font-size:var(--b11);color:var(--n5);}
 .obs-done .od-link{margin-left:8px;color:var(--blue);font-size:var(--b13);font-weight:700;cursor:pointer;}
-
-/* ---- x-ray clash callout ---- */
-.clash{position:absolute;z-index:17;opacity:0;transition:opacity var(--t-cross) var(--ease) 120ms;pointer-events:none;}
-.ipad.xray .clash{opacity:1;}
-.clash .ringc{width:96px;height:96px;border-radius:50%;border:2px solid var(--blue);box-shadow:0 0 0 4px rgba(13,181,255,.18);}
-.clash .tag2{position:absolute;top:-12px;left:104px;white-space:nowrap;background:rgba(24,24,27,.88);color:#fff;font-size:var(--b11);font-weight:700;padding:8px 13px;border-radius:var(--r-md);backdrop-filter:blur(8px);box-shadow:var(--sh-2);border:1px solid rgba(13,181,255,.5);border-left:3px solid var(--blue);}
-.clash .tag2 b{color:var(--blue);}
-.clash .tag2:before{content:"";position:absolute;left:-12px;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:rgba(24,24,27,.88);}
 
 /* ---- Plan overlay (large navigable plan; same icon toggles) ---- */
 .planview{position:absolute;top:54px;left:0;right:0;bottom:0;background:rgba(20,20,22,.55);backdrop-filter:blur(4px);z-index:23;
@@ -436,8 +429,6 @@ footer{margin-top:120px;border-top:1px solid #26262a;padding-top:30px;font-size:
         <div class="viewport">
           <img class="layer-solid" src="Interior.png" alt="Location view, all layers solid">
           <img class="layer-trans" src="Interior_Transparent.png" alt="Location view, architectural layer translucent">
-          <div class="clash" style="left:50%;top:30%"><div class="ringc"></div>
-            <div class="tag2"><b>Revealed:</b> duct behind the soffit clashes with the beam</div></div>
           <div class="pin" id="heroPin" style="left:52%;top:40%"><div class="body"></div><span class="num">14</span>
             <div class="synced-badge"><svg class="i-check"></svg></div></div>
         </div>
@@ -557,8 +548,8 @@ footer{margin-top:120px;border-top:1px solid #26262a;padding-top:30px;font-size:
               <button class="obs-type" disabled>RFI<small>in Procore</small></button>
               <button class="obs-type" disabled>Drawing<small>in Procore</small></button>
             </div>
-            <div class="obs-field"><label>Title</label><input class="field" value="Duct / beam clash at Level 3 soffit"></div>
-            <div class="obs-field"><label>Description</label><textarea class="field" rows="2" placeholder="Describe the issue">Supply duct conflicts with the structural beam above the kitchenette soffit. Needs coordination before rough-in.</textarea></div>
+            <div class="obs-field"><label>Title</label><input class="field" id="obsTitle" value="Duct / beam clash at Level 3 soffit"></div>
+            <div class="obs-field"><label>Description</label><textarea class="field" id="obsDesc" rows="2" placeholder="Describe the issue">Supply duct conflicts with the structural beam above the kitchenette soffit. Needs coordination before rough-in.</textarea></div>
             <div class="obs-field"><label>Attachments</label>
               <div class="obs-attach">
                 <button class="att" id="attPhoto"><svg class="i-image"></svg><span>Add photo</span></button>
@@ -570,15 +561,15 @@ footer{margin-top:120px;border-top:1px solid #26262a;padding-top:30px;font-size:
               <div class="obs-field"><label>Priority</label>
                 <div class="seg pri"><button>Low</button><button class="on">Medium</button><button>High</button><button>Urgent</button></div>
               </div>
-              <div class="obs-field"><label>Assignee</label><div class="sel">Mechanical sub<svg class="i-chevdown"></svg></div></div>
+              <div class="obs-field"><label>Assignee</label><div class="sel" id="obsAssignee">Mechanical sub<svg class="i-chevdown"></svg></div></div>
               <div class="obs-field"><label>Due date</label><div class="sel">Jun 11, 2026<svg class="i-chevdown"></svg></div></div>
-              <div class="obs-field"><label>Location</label><div class="sel">Level 3 · West bay<svg class="i-chevdown"></svg></div></div>
-              <div class="obs-field"><label>Trade</label><div class="sel">Mechanical (HVAC)<svg class="i-chevdown"></svg></div></div>
+              <div class="obs-field"><label>Location</label><div class="sel" id="obsLocation">Level 3 · West bay<svg class="i-chevdown"></svg></div></div>
+              <div class="obs-field"><label>Trade</label><div class="sel" id="obsTrade">Mechanical (HVAC)<svg class="i-chevdown"></svg></div></div>
             </div>
             <button class="obs-more" id="obsMore">More Procore fields<svg class="i-chevdown"></svg></button>
             <div class="obs-extra">
               <div class="obs-field"><label>Status</label><div class="sel">Initiated<svg class="i-chevdown"></svg></div></div>
-              <div class="obs-field"><label>Spec section</label><div class="sel">23 00 00 · HVAC<svg class="i-chevdown"></svg></div></div>
+              <div class="obs-field"><label>Spec section</label><div class="sel" id="obsSpec">23 00 00 · HVAC<svg class="i-chevdown"></svg></div></div>
               <div class="obs-field"><label>Distribution</label><div class="sel">2 people<svg class="i-chevdown"></svg></div></div>
               <label class="obs-check"><input type="checkbox">Private (Admins, assignee &amp; distribution only)</label>
             </div>
@@ -670,6 +661,30 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitBooth);
 const _noop=()=>{};const mkStub=()=>({classList:{add:_noop,remove:_noop,toggle:_noop,contains:()=>false},addEventListener:_noop,set onclick(v){},set textContent(v){}});
 const bS=mkStub(),bT=mkStub(),bLayers=mkStub(),bViews=mkStub(),bPlan=mkStub(),bUpdate=mkStub(),bObs=mkStub();
 const pin=document.getElementById('heroPin'),viewport=hero.querySelector('.viewport'),fab=hero.querySelector('.fab');
+/* ---- two rendered viewpoints: solid + x-ray pairs, travelled to via the plan drop ---- */
+const layerSolid=viewport.querySelector('.layer-solid'),layerTrans=viewport.querySelector('.layer-trans');
+const pvMarker=hero.querySelector('.pv-marker'),pvMarkerCone=pvMarker.querySelector('.cone');
+const SETS={1:{solid:'Interior.png',trans:'Interior_Transparent.png'},2:{solid:'Interior_2.png',trans:'Interior_2_Transparent.png'}};
+const HOME_MARKER={x:48,y:27,deg:30};
+[SETS[2].solid,SETS[2].trans].forEach(s=>{const i=new Image();i.src=s;});  /* warm the cache so travel never flashes */
+/* per-viewpoint observation pre-fill */
+const OBS_FIELDS={
+  1:{title:'Duct / beam clash at Level 3 soffit',
+     desc:'Supply duct conflicts with the structural beam above the kitchenette soffit. Needs coordination before rough-in.',
+     assignee:'Mechanical sub',trade:'Mechanical (HVAC)',location:'Level 3 · West bay',spec:'23 00 00 · HVAC'},
+  2:{title:'Conduit / Beam Clash at Level 3 soffit',
+     desc:'Conduit emerging from wall panel in Room 3150 clashes with the structural beam. Electrical engineer to reroute conduit to avoid the clash.',
+     assignee:'Electrical sub',trade:'Electrical',location:'Level 3 · Room 3150',spec:'26 00 00 · Electrical'}
+};
+const obsTitle=document.getElementById('obsTitle'),obsDesc=document.getElementById('obsDesc'),obsAssignee=document.getElementById('obsAssignee'),obsTrade=document.getElementById('obsTrade'),obsLocation=document.getElementById('obsLocation'),obsSpec=document.getElementById('obsSpec');
+function applyObsFields(){const f=OBS_FIELDS[currentView];obsTitle.value=f.title;obsDesc.value=f.desc;obsAssignee.childNodes[0].nodeValue=f.assignee;obsTrade.childNodes[0].nodeValue=f.trade;obsLocation.childNodes[0].nodeValue=f.location;obsSpec.childNodes[0].nodeValue=f.spec;}
+let currentView=1,obsToastT=null;
+function setMarker(x,y,deg){pvMarker.style.left=x+'%';pvMarker.style.top=y+'%';pvMarkerCone.style.transform='rotate('+deg+'deg)';}
+function loadView(v){currentView=v;layerSolid.src=SETS[v].solid;layerTrans.src=SETS[v].trans;}
+function travelTo(v,pos,aim){setXray(false);loadView(v);clearTimeout(obsToastT);
+  pin.style.display='none';hero.classList.remove('obs-open','obs-syncing','obs-synced','placing','obs-done-hide');
+  if(pos)setMarker(pos.x,pos.y,(aim==null?HOME_MARKER.deg:aim));
+  hero.classList.add('arriving');setTimeout(()=>hero.classList.remove('arriving'),520);}
 const railLayers=document.getElementById('railLayers'),railViews=document.getElementById('railViews'),railPlan=document.getElementById('railPlan');
 const archTri=document.getElementById('archTri'),elecStatus=document.getElementById('elecStatus'),spResync=document.getElementById('spResync');
 const nDismiss=document.getElementById('nDismiss'),nSync=document.getElementById('nSync');
@@ -697,12 +712,13 @@ function fireUpdate(){hero.classList.add('notif-on');bUpdate.classList.add('acti
 function resetUpdate(){hero.classList.remove('notif-on','working-on');setBehind(false);bUpdate.classList.remove('active');bUpdate.textContent='Simulate update';}
 
 /* ---- observation flow: place → fields → sync → synced ---- */
-function startPlacing(){setFn(null);hero.classList.remove('obs-open','obs-syncing','obs-synced','obs-more-on');hero.classList.add('placing');bObs.classList.add('active');}
+function startPlacing(){clearTimeout(obsToastT);setFn(null);hero.classList.remove('obs-open','obs-syncing','obs-synced','obs-more-on','obs-done-hide');hero.classList.add('placing');bObs.classList.add('active');}
 function placePinAt(xp,yp){pin.style.left=xp+'%';pin.style.top=yp+'%';pin.style.display='';}
-function openObs(){hero.classList.remove('placing');setFn(null);hero.classList.add('obs-open');}
-function resetObs(){hero.classList.remove('placing','obs-open','obs-syncing','obs-synced');pin.style.display='none';bObs.classList.remove('active');}
-function createObs(){hero.classList.remove('obs-open');hero.classList.add('obs-syncing');
-  setTimeout(()=>{hero.classList.remove('obs-syncing');hero.classList.add('obs-synced');bObs.classList.remove('active');},1300);}
+function openObs(){applyObsFields();hero.classList.remove('placing');setFn(null);hero.classList.add('obs-open');}
+function resetObs(){clearTimeout(obsToastT);hero.classList.remove('placing','obs-open','obs-syncing','obs-synced','obs-done-hide');pin.style.display='none';bObs.classList.remove('active');}
+function createObs(){hero.classList.remove('obs-open','obs-done-hide');clearTimeout(obsToastT);hero.classList.add('obs-syncing');
+  setTimeout(()=>{hero.classList.remove('obs-syncing');hero.classList.add('obs-synced');bObs.classList.remove('active');
+    obsToastT=setTimeout(()=>hero.classList.add('obs-done-hide'),3000);},1300);}
 function fillAtt(btn,src,label){btn.classList.add('filled');if(!btn.querySelector('.thumb')){const i=document.createElement('img');i.className='thumb';i.src=src;btn.insertBefore(i,btn.firstChild);}btn.querySelector('span').textContent=label;}
 
 /* board controls */
@@ -726,7 +742,7 @@ viewport.onclick=(e)=>{if(!hero.classList.contains('placing'))return;const r=vie
 obsClose.onclick=resetObs;obsCancel.onclick=resetObs;obsCreate.onclick=createObs;
 obsMore.onclick=()=>hero.classList.toggle('obs-more-on');
 attPhoto.onclick=()=>fillAtt(attPhoto,'Demo_iPadMockUp.png','Photo attached');
-attPersp.onclick=()=>fillAtt(attPersp, hero.classList.contains('xray')?'Interior_Transparent.png':'Interior.png','Current view');
+attPersp.onclick=()=>fillAtt(attPersp, hero.classList.contains('xray')?SETS[currentView].trans:SETS[currentView].solid,'Current view');
 
 /* Architectural tri wired to the crossfade; Hidden is visual-only */
 archTri.querySelectorAll('button').forEach(b=>b.onclick=()=>{const st=b.dataset.st;
@@ -739,13 +755,13 @@ document.querySelectorAll('.lp-tri').forEach(tri=>{if(tri===archTri)return;
 /* ---- plan camera-drop: press-hold to place, tap to aim, Move here to arrive ---- */
 const pvSheet=document.getElementById('pvSheet'),pvHold=document.getElementById('pvHold'),pvDrop=document.getElementById('pvDrop'),pvMove=document.getElementById('pvMove'),pvHint=document.getElementById('pvHint'),pvDropCone=pvDrop.querySelector('.cone');
 const HINT_IDLE='<svg viewBox="0 0 24 24"><use href="#g-direction"/></svg>Press &amp; hold the plan to drop a camera';
-let dropPhase=0,dropXY=null,holdT=null,suppressClick=false;
+let dropPhase=0,dropXY=null,holdT=null,suppressClick=false,lastAim=null;
 function pctFromEvt(e){const r=pvSheet.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100};}
 function resetDrop(){dropPhase=0;dropXY=null;hero.classList.remove('dropping','drop-confirm');pvHold.classList.remove('go');pvHint.innerHTML=HINT_IDLE;}
 function placeCamera(p){dropXY=p;pvDrop.style.left=p.x+'%';pvDrop.style.top=p.y+'%';pvMove.style.left=p.x+'%';pvMove.style.top=p.y+'%';
   hero.classList.add('dropping');hero.classList.remove('drop-confirm');dropPhase=2;pvHold.classList.remove('go');
   pvHint.innerHTML='<svg viewBox="0 0 24 24"><use href="#g-direction"/></svg>Tap to set the direction the camera faces';}
-function aimCamera(p){const ang=Math.atan2(p.y-dropXY.y,p.x-dropXY.x)*180/Math.PI-90;pvDropCone.style.transform='rotate('+ang.toFixed(1)+'deg)';
+function aimCamera(p){const ang=Math.atan2(p.y-dropXY.y,p.x-dropXY.x)*180/Math.PI-90;pvDropCone.style.transform='rotate('+ang.toFixed(1)+'deg)';lastAim=+ang.toFixed(1);
   dropPhase=3;hero.classList.add('drop-confirm');pvHint.innerHTML='<svg viewBox="0 0 24 24"><use href="#g-direction"/></svg>Camera placed and aimed';}
 pvSheet.addEventListener('pointerdown',e=>{if(dropPhase===2)return;const p=pctFromEvt(e);
   pvHold.style.left=p.x+'%';pvHold.style.top=p.y+'%';pvHold.classList.remove('go');void pvHold.offsetWidth;pvHold.classList.add('go');
@@ -753,7 +769,7 @@ pvSheet.addEventListener('pointerdown',e=>{if(dropPhase===2)return;const p=pctFr
 function cancelHold(){clearTimeout(holdT);if(dropPhase<2)pvHold.classList.remove('go');}
 pvSheet.addEventListener('pointerup',cancelHold);pvSheet.addEventListener('pointerleave',cancelHold);
 pvSheet.addEventListener('click',e=>{if(suppressClick){suppressClick=false;return;}if(dropPhase===2)aimCamera(pctFromEvt(e));});
-pvMove.onclick=e=>{e.stopPropagation();setFn(null);resetDrop();hero.classList.add('arriving');setTimeout(()=>hero.classList.remove('arriving'),520);};
+pvMove.onclick=e=>{e.stopPropagation();const target=currentView===1?2:1,pos=dropXY,aim=lastAim;setFn(null);resetDrop();travelTo(target,pos,aim);};
 pin.style.display='none';
 setFn(null);   /* booth opens on the clean photoreal arrival */
 if(location.hash==='#xray')setXray(true);
@@ -797,7 +813,7 @@ function exportCSV(){const all=JSON.parse(localStorage.getItem(FB_KEY)||'[]');
   const rows=all.map(r=>[r.ts,r.role,r.useful,r.likelihood,r.comment,r.email,r.demo,r.id].map(esc).join(','));
   const csv=[head].concat(rows).join('\r\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='onsite-feedback.csv';a.click();}
-function resetDemo(){resetObs();resetUpdate();resetDrop();setXray(false);setFn(null);hero.classList.remove('stale-open');closeFb();}
+function resetDemo(){resetObs();resetUpdate();resetDrop();setXray(false);setFn(null);hero.classList.remove('stale-open');closeFb();loadView(1);setMarker(HOME_MARKER.x,HOME_MARKER.y,HOME_MARKER.deg);}
 
 /* presenter rail buttons */
 document.getElementById('pzUpdate').onclick=()=>{(hero.classList.contains('notif-on')||hero.classList.contains('working-on')||hero.classList.contains('elec-behind'))?resetUpdate():fireUpdate();};
